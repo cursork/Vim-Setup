@@ -1,0 +1,3 @@
+# Neil's Vim Folder
+
+Recorded for posterity...

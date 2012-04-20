@@ -2,7 +2,7 @@
 scriptencoding utf-8
 set   encoding=utf-8
 
-" Bundles for plugins, filetypes, etc.
+" Use bundle directory for plugins, filetypes, etc.
 call pathogen#infect()
 " These must go before any changes to highlighting
 syntax enable
@@ -11,7 +11,7 @@ filetype plugin indent on
 " Give up syntax highlighting on lines > 5000 chars long (default 3000)
 set synmaxcol=5000
 
-" Allow either light or dark BG. Maybe split into separate files to be sourced?
+" Allow either light or dark BG
 if $COLORSCHEME =~'light' || has('gui_running')
 	" Nicotine is excellent
 	colorscheme nicotine
@@ -19,22 +19,26 @@ if $COLORSCHEME =~'light' || has('gui_running')
 	" ...but needs some refinement
 	highlight CursorLine ctermbg=lightgrey cterm=none gui=none guibg=#F0F0F0
 	highlight ColorColumn guibg=#fcfcc0
+	highlight LineNr gui=italic guibg=#EEEEBB guifg=#000000
 	" Slightly nicer Visual mode
 	highlight Visual guibg=#cceefc
-	" nicotine doesn't highlight identifiers!
+	" nicotine doesn't highlight identifiers by default
 	highlight Identifier ctermfg=blue guifg=blue
 else
+	" Elflord is nice on a terminal but absolutely vile in gVim
 	colorscheme elflord
 	highlight Constant ctermfg=darkred
 	highlight CursorLine ctermbg=darkgrey cterm=none gui=none guibg=#000075
 endif
 
 " Really want ALT to be used for Vim only on Windows. Whether or not the menu
-" is displayed.
+" is displayed. N.B. doesn't stop Alt-F4
 set winaltkeys=no
 
 if has('gui_running')
-	" Hide menu by default
+	" Hide decorations by default
+	" m = menubar, r = right scrollbar, L = left scrollbar (in vert split),
+	" T = toolbar
 	set guioptions-=m
 	set guioptions-=r
 	set guioptions-=T
@@ -43,8 +47,6 @@ if has('gui_running')
 	set guioptions+=c
 
 	" Toggle menubar/toolbar/scrollbar with F11
-	" m = menubar, r = right scrollbar, L = left scrollbar (in vert split),
-	" T = toolbar
 	function! ToggleGvimBits()
 		if &go=~#'m'
 			set go-=mrTL
@@ -57,7 +59,7 @@ if has('gui_running')
 	vnoremap <F11> <C-c>:call ToggleGvimBits()<CR>gv
 
 	if has('gui_macvim')
-		" Nice and pretty good UTF-8 compatibility
+		" Nice and decent Unicode support
 		set guifont=Menlo
 	elseif (has('win32') || has('win64'))
 		" Consolas is nice, but has bad character support. Courier New has
@@ -95,8 +97,8 @@ if exists('+undofile')
 	endif
 endif
 
-" Write backup and undo files to another directory - don't pollute current
-" directory with rubbish
+" Write backup files to another directory - don't pollute current directory
+" with rubbish
 set backup
 set writebackup
 if has('unix')
@@ -109,8 +111,6 @@ endif
 
 " Most Recently Used plugin stores recent files separate from command history
 if v:version >= 700
-	" TODO Don't know how to make let use variables...
-	" let MRU_File = 'mru_files'
 	let MRU_Max_Entries        = 1000
 	let MRU_Exclude_Files      = "\\Temp\\|/tmp/"
 	" Trying a setup where recent files are always open for easy switching
@@ -118,6 +118,8 @@ if v:version >= 700
 	let MRU_Use_Current_Window = 0
 	let MRU_Auto_Close         = 0
 	let MRU_Max_Menu_Entries   = 50
+	" Alias :mru to :Mru - can't be a proper command as user-defined commands
+	" are expected to start with a capital letter
 	nnoremap :mru :Mru
 endif
 
@@ -126,7 +128,7 @@ set ignorecase
 set smartcase
 set incsearch
 " More often than not I don't want highlighting. But I want it readily
-" available nonetheless. And since I don't use space for anything...
+" available nonetheless.
 set nohlsearch
 nnoremap <F9> :set hlsearch!<CR>:set hlsearch?<CR>
 " Trial this: Automatically put me in Perl-like 'very magic' mode for searches
@@ -234,10 +236,10 @@ if has("perl")
 	}
 EOF
 
-	function! NKTempPerlFile()
-		perl new_temp_perl_file()
-	endfunction
-	com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
+function! NKTempPerlFile()
+	perl new_temp_perl_file()
+endfunction
+com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
 endif
 function! NKCurrentProc()
 	if has("perl")
@@ -346,8 +348,8 @@ set mouse=nv
 
 " Stops SQL filetype plugin remapping left and right in insert mode...
 let g:omni_sql_no_default_maps=1
-" Default to Informix filetype
-let g:sql_type_default='sqlinformix'
+" Default to MySQL filetype
+let g:sql_type_default='mysql'
 " VCS plugin should default to vertical splits
 let VCSCommandSplit='vertical'
 
@@ -374,20 +376,8 @@ nnoremap :S  :s
 nnoremap :Bd :bd
 nnoremap :BD :bd
 nnoremap :E  :e
-" Tab goes through windows in normal mode, and shift-arrows move around. May
-" not work in all terminals due to termcap or whatever.
-nnoremap <Tab>     <C-w><C-w>
-nnoremap <S-Left>  <C-w>h
-nnoremap <S-Down>  <C-w>j
-nnoremap <S-Up>    <C-w>k
-nnoremap <S-Right> <C-w>l
-" Use t-left/right to move tabs
-" moves left<->right
-nnoremap tl       :tabnext<CR>
-nnoremap th       :tabprevious<CR>
-
-" Remove current line and paste / replace current line with yanked content
-nnoremap <C-p> "_ddP
+" Tab goes through windows in normal mode
+nnoremap <Tab> <C-w><C-w>
 
 " Show/hide line numbers or relative numbers.
 " No line numbers -> line numbers -> relative line numbers
@@ -414,23 +404,24 @@ nnoremap \<right> :rightbelow vnew
 nnoremap \<up>    :leftabove  new 
 nnoremap \<down>  :rightbelow new 
 
-" Improve the Vim experience - May or may not keep these...
 " Ctrl-X Ctrl-O can be pretty annoying if it's being used a lot
 inoremap <C-]> <C-x><C-o>
 " Carry out line-by-line undo in insert
 inoremap <CR> <C-G>u<CR>
 " By default 'Y' yanks the whole line (to be vi-compatible); replace it with
-" yank to end of line for consistency.
+" yank to end of line for consistency with 'D'elete and 'C'hange.
 nnoremap Y y$
 
 " Plugin-changing stuff...
 
-" Zencoding plug-in's Ctrl-y based commands are a bit unpleasant. I just want
-" to scroll!!
+" Zencoding plug-in's Ctrl-y based commands are a bit unpleasant as they break
+" using C-y to scroll the window up.
 " N.B. zencoding can be used for more than HTML. Effectively it also gives us
 " snippets in other languages... See :help zencoding-define-tags-behavior
 let g:user_zen_leader_key = '<C-h>'
 
+" Override default Windows behaviour of minimizing by spawning a new console.
+" N.B. this is also useful on systems where Vim isn't backgrounding properly.
 nnoremap <C-z> :sh<CR>
 vnoremap <C-z> <Esc>:sh<CR>
 
@@ -441,19 +432,8 @@ let g:LargeFile = 50
 let g:xml_syntax_folding=1
 au FileType xml setlocal foldmethod=syntax
 
+" Syntastic should use signs to show compile errors
 let g:syntastic_enable_signs=1
-
-" Wraps around tabname.vim
-function! NKToggleTab()
-	if exists('t:tab_name')
-		TNoName
-		echo 'Removed Tab Name'
-	else
-		let new_tab_name = input('Tab Name: ')
-		TName new_tab_name
-	endif
-endfunction
-nnoremap <F7> :call NKToggleTab()<CR>
 
 " Document reading mode, provides elinks-like insert/delete scrolling
 " N.B. insert / delete are mapped for ALL buffers
@@ -504,7 +484,7 @@ nnoremap <F5>   :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>
 nnoremap <M-F6> :set expandtab!<CR>:set expandtab?<CR>
 
-" Show all registers
+" Show all alphabetic registers
 com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
 
 " Show what F-keys do
@@ -513,7 +493,7 @@ function! NKKeys()
 	echo " F4  - Format paragraph             | Alt-F4   - Toggle formatting"
 	echo " F5  - Toggle case-sensitive search |"
 	echo " F6  - Toggle paste                 | Alt-F6   - Toggle expand tabs"
-	echo " F7  - Add/Remove tab name          |"
+	echo " F7  -                              |"
 	echo " F8  - (Normal/Insert) Spell-check  | (Visual) - Open selection in new window"
 	echo " F9  - Highlight search terms       |"
 	echo " F10 - Line numbers                 |"
@@ -524,9 +504,3 @@ com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>
 
 " Fin
-
-" TIPS
-" :undolist - shows undo branches. Can then go to a number using :undo N.
-" SPELLING  - z= - suggestions , zg - add to dictionary , zug - undo add , ]s &
-"             [s - next/prev spelling mistake
-" Folds     - za - fold here, zO ('oh') - unfold this fold completely

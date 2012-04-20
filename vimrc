@@ -2,6 +2,8 @@
 scriptencoding utf-8
 set   encoding=utf-8
 
+" Bundles for plugins, filetypes, etc.
+call pathogen#infect()
 " These must go before any changes to highlighting
 syntax enable
 filetype plugin indent on
@@ -70,16 +72,20 @@ if has('gui_running')
 	endif
 endif
 
-set nocompatible " no to vi-compatible (not actually necessary, but does no harm)
-set hidden       " edit buffers without saving to-be-abandoned one
-                 " (no prompt to save on ':e')
+" No to vi-compatible. Not necessary, since a .vimrc exists
+set nocompatible
+" Edit buffers without saving to-be-hidden one. Effect is there is no prompt to
+" save when using ':e'. Downside is that it disables a nice GVIM feature: If
+" currently editing a file, a drag-and-dropped file splits the windows when
+" nohidden is set.
+set hidden
 
 " W stops :w! overwriting a readonly file if possible (believe this applies
 " only to filesystem read-only - not 'setlocal readonly').
 " Z stops the readonly flag being removed if you do do a :w!
 set cpoptions+=WZ
 
-" persistent undo
+" Persistent undo across edits of the same file
 if exists('+undofile')
 	set undofile
 	if has('unix')
@@ -101,6 +107,20 @@ else
 	set directory=$VIM\vimfiles\backup
 endif
 
+" Most Recently Used plugin stores recent files separate from command history
+if v:version >= 700
+	" TODO Don't know how to make let use variables...
+	" let MRU_File = 'mru_files'
+	let MRU_Max_Entries        = 1000
+	let MRU_Exclude_Files      = "\\Temp\\|/tmp/"
+	" Trying a setup where recent files are always open for easy switching
+	let MRU_Window_Height      = 5
+	let MRU_Use_Current_Window = 0
+	let MRU_Auto_Close         = 0
+	let MRU_Max_Menu_Entries   = 50
+	nnoremap :mru :Mru
+endif
+
 " Search options
 set ignorecase
 set smartcase
@@ -109,6 +129,8 @@ set incsearch
 " available nonetheless. And since I don't use space for anything...
 set nohlsearch
 nnoremap <F9> :set hlsearch!<CR>:set hlsearch?<CR>
+" Trial this: Automatically put me in Perl-like 'very magic' mode for searches
+nnoremap / /\v
 
 " Cursor line only shows in active window.
 if exists('&cursorline')
@@ -266,11 +288,13 @@ set nojoinspaces
 
 " Don't softwrap by default... But if we do turn it on, we will indicate
 " softwraps with a curled arrow or a tilde - done in >=7.2 stuff below.
+" - If you want proper *word* wrapping, the following is all required:
+"   set wrap; set nolist; set linebreak
 set nowrap
 
 " 7.2 can definitely cope with nicer characters, except when running under a
 " cmd.exe-like environment (pcterm)
-if v:version >= 702 && &term!='pcterm'
+if v:version >= 702 && &term != 'pcterm'
 	set listchars=tab:»\ 
 	set listchars+=trail:·
 	if has('unix')
@@ -405,7 +429,10 @@ nnoremap Y y$
 " to scroll!!
 " N.B. zencoding can be used for more than HTML. Effectively it also gives us
 " snippets in other languages... See :help zencoding-define-tags-behavior
-let g:user_zen_leader_key = '<C-z>'
+let g:user_zen_leader_key = '<C-h>'
+
+nnoremap <C-z> :sh<CR>
+vnoremap <C-z> <Esc>:sh<CR>
 
 " A large file is > 50MB. See LargeFile plugin. Undo with :Unlarge
 let g:LargeFile = 50

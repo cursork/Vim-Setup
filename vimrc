@@ -24,6 +24,8 @@ if $COLORSCHEME =~'light' || has('gui_running')
 	highlight Visual guibg=#cceefc
 	" nicotine doesn't highlight identifiers by default
 	highlight Identifier ctermfg=blue guifg=blue
+	" Bold grey for hidden items
+	highlight Ignore guifg=#999999 gui=bold
 else
 	" Elflord is nice on a terminal but absolutely vile in gVim
 	colorscheme elflord
@@ -411,6 +413,10 @@ inoremap <CR> <C-G>u<CR>
 " By default 'Y' yanks the whole line (to be vi-compatible); replace it with
 " yank to end of line for consistency with 'D'elete and 'C'hange.
 nnoremap Y y$
+" Convenience method for yanking to the system clipboard in Windows
+if (has('win32') || has('win64'))
+	vnoremap <C-y> "*y
+endif
 
 " Plugin-changing stuff...
 
@@ -461,9 +467,13 @@ function! NKDocumentRead()
 endfunction
 nnoremap <F3> :call NKDocumentRead()<CR>
 
+" Reformat line
+nnoremap <F4> :execute 'normal gww'<CR>
+inoremap <F4> <Esc>:execute 'normal gww'<CR>a
 " Reformat paragraph
-nnoremap <F4> :execute 'normal gwap'<CR>
-inoremap <F4> <Esc>:execute 'normal gwap'<CR>a
+nnoremap <S-F4> :execute 'normal gwap'<CR>
+inoremap <S-F4> <Esc>:execute 'normal gwap'<CR>a
+" Reformat selection
 vnoremap <F4> gw
 
 " Toggle automatic formatting of text files
@@ -483,6 +493,11 @@ vnoremap  <M-F4> <Esc>:call NKToggleFormatting()<CR>gv
 nnoremap <F5>   :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>
 nnoremap <M-F6> :set expandtab!<CR>:set expandtab?<CR>
+nnoremap <F7>   :TagbarToggle<CR>
+nnoremap <M-F7> :NERDTreeToggle<CR>
+
+" Tagbar opens on lef
+let g:tagbar_left = 1
 
 " Show all alphabetic registers
 com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
@@ -493,7 +508,7 @@ function! NKKeys()
 	echo " F4  - Format paragraph             | Alt-F4   - Toggle formatting"
 	echo " F5  - Toggle case-sensitive search |"
 	echo " F6  - Toggle paste                 | Alt-F6   - Toggle expand tabs"
-	echo " F7  -                              |"
+	echo " F7  - Toggle Tagbar                | Alt-F7   - Toggle NERD Tree"
 	echo " F8  - (Normal/Insert) Spell-check  | (Visual) - Open selection in new window"
 	echo " F9  - Highlight search terms       |"
 	echo " F10 - Line numbers                 |"

@@ -4,6 +4,7 @@ set   encoding=utf-8
 
 " Use bundle directory for plugins, filetypes, etc.
 call pathogen#infect()
+
 " These must go before any changes to highlighting
 syntax enable
 filetype plugin indent on
@@ -271,6 +272,9 @@ if !exists('*SyntasticStatuslineFlag')
 		return ''
 	endfunction
 endif
+" HTML with {{templates}} is error-rific
+let g:syntastic_mode_map = {}
+let g:syntastic_mode_map['passive_filetypes'] = ['html']
 
 " Status line is filename[RO] [filetype] : line, column current-proc <gap> char/hex char syntastic-error
 set statusline=\ %t%r%m\ %y\ :\ %-4.l,\ %-3.c\ %{NKCurrentProc()}\ %=%b/0x%B\ %{SyntasticStatuslineFlag()}
@@ -301,7 +305,7 @@ set nowrap
 if v:version >= 702 && &term != 'pcterm'
 	set listchars=tab:»\ 
 	set listchars+=trail:·
-	if has('unix')
+	if has('unix') && has('gui_running')
 		" So far only Menlo seems to have this - don't have Linux around to
 		" test what turns up though - so give it a go
 		set showbreak=↪···
@@ -502,7 +506,7 @@ nnoremap <M-F7> :NERDTreeToggle<CR>
 " Tagbar opens on lef
 let g:tagbar_left = 1
 
-" Show all alphabetic registers
+" Show all registers
 com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
 
 " Show what F-keys do

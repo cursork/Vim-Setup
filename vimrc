@@ -414,8 +414,11 @@ inoremap <CR> <C-G>u<CR>
 " yank to end of line for consistency with 'D'elete and 'C'hange.
 nnoremap Y y$
 " Convenience method for yanking to the system clipboard in Windows
+" Nicer than 'set clipboard=unnamed' as it forces a choice - e.g. deleted lines
+" don't just get sent to the clipboard
 if (has('win32') || has('win64'))
 	vnoremap <C-y> "*y
+	nnoremap <C-y> "*y
 endif
 
 " Plugin-changing stuff...

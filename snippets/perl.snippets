@@ -111,3 +111,24 @@ snippet cl
 snippet slurp
 	my $${1:var};
 	{ local $/ = undef; local *FILE; open FILE, "<${2:file}"; $$1 = <FILE>; close FILE }${3}
+# POD!
+snippet POD
+	__END__
+	=head1 NAME
+	
+	=head1 SYNOPSIS
+	
+	=head1 DESCRIPTION
+	
+	=head1 SUBROUTINES/METHODS
+	
+	=head1 DIAGNOSTICS
+	
+	=head1 CONFIGURATION AND ENVIRONMENT
+	
+	=head1 DEPENDENCIES
+	
+	=head1 INCOMPATIBILITIES
+	
+	=head1 BUGS AND LIMITATIONS
+

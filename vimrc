@@ -118,14 +118,16 @@ endif
 if v:version >= 700
 	let MRU_Max_Entries        = 1000
 	let MRU_Exclude_Files      = "\\Temp\\|/tmp/"
-	" Trying a setup where recent files are always open for easy switching
 	let MRU_Window_Height      = 5
 	let MRU_Use_Current_Window = 0
-	let MRU_Auto_Close         = 0
+	let MRU_Auto_Close         = 1
 	let MRU_Max_Menu_Entries   = 50
 	" Alias :mru to :Mru - can't be a proper command as user-defined commands
 	" are expected to start with a capital letter
 	nnoremap :mru :Mru
+	nnoremap  <F12> :Mru<CR>
+	inoremap  <F12> <Esc>:Mru<CR>a
+	vnoremap  <F12> <Esc>:Mru<CR>gv
 endif
 
 " Search options
@@ -193,8 +195,8 @@ endif
 " Open selection in new buffer (TODO function-ise)
 vnoremap <F8> <Esc><CR>:let b:nk_old_a_register=@a<CR>gvy:new<CR>pggdd<C-w>p:let @a=b:nk_old_a_register<CR><C-w>p:let &filetype=input('Filetype? ')<CR>
 
-nnoremap <F12> :syntax sync fromstart<CR>
-inoremap <F12> <Esc>:syntax sync fromstart<CR>a
+nnoremap <F11> :syntax sync fromstart<CR>
+inoremap <F11> <Esc>:syntax sync fromstart<CR>a
 
 " Use perl to find the current proc.
 if has("perl")
@@ -354,6 +356,8 @@ let g:omni_sql_no_default_maps=1
 let g:sql_type_default='mysql'
 " VCS plugin should default to vertical splits
 let VCSCommandSplit='vertical'
+" Clojure Rainbow parentheses
+let g:vimclojure#ParenRainbow=1
 
 " Use ack ( betterthangrep.com ) instead. Filters out hidden files. Also
 " don't restrict by filetype (-a) in order to be a bit more grep-like.
@@ -407,10 +411,10 @@ inoremap <F10> <Esc>:call NKLineNumberSwitch()<CR>a
 vnoremap <F10> <Esc>:call NKLineNumberSwitch()<CR>gv
 
 " Open new window split in direction of cursor-key pressed
-nnoremap \<left>  :leftabove  vnew 
-nnoremap \<right> :rightbelow vnew 
-nnoremap \<up>    :leftabove  new 
-nnoremap \<down>  :rightbelow new 
+nnoremap <Leader><left>  :leftabove  vnew 
+nnoremap <Leader><right> :rightbelow vnew 
+nnoremap <Leader><up>    :leftabove  new 
+nnoremap <Leader><down>  :rightbelow new 
 
 " Ctrl-X Ctrl-O can be pretty annoying if it's being used a lot
 inoremap <C-]> <C-x><C-o>
@@ -419,9 +423,20 @@ inoremap <CR> <C-G>u<CR>
 " By default 'Y' yanks the whole line (to be vi-compatible); replace it with
 " yank to end of line for consistency with 'D'elete and 'C'hange.
 nnoremap Y y$
-" Convenience method for yanking to the system clipboard in Windows
+
 if (has('win32') || has('win64'))
-	vnoremap <C-y> "*y
+	" Convenience method for yanking to the system clipboard in Windows Nicer
+	" than 'set clipboard=unnamed' as it forces a choice - e.g. deleted lines
+	" don't just get sent to the system clipboard
+	vnoremap <M-y>   "*y
+	nnoremap <M-y>   "*y
+	nnoremap <M-S-y> "*y$
+
+	" Override default Windows behaviour of minimizing by spawning a new
+	" console. N.B. this can also be useful on systems where Vim isn't
+	" backgrounding properly.
+	nnoremap <C-z> :sh<CR>
+	vnoremap <C-z> <Esc>:sh<CR>
 endif
 
 " Plugin-changing stuff...
@@ -430,12 +445,7 @@ endif
 " using C-y to scroll the window up.
 " N.B. zencoding can be used for more than HTML. Effectively it also gives us
 " snippets in other languages... See :help zencoding-define-tags-behavior
-let g:user_zen_leader_key = '<C-h>'
-
-" Override default Windows behaviour of minimizing by spawning a new console.
-" N.B. this is also useful on systems where Vim isn't backgrounding properly.
-nnoremap <C-z> :sh<CR>
-vnoremap <C-z> <Esc>:sh<CR>
+let g:user_zen_leader_key = '<C-\>'
 
 " A large file is > 50MB. See LargeFile plugin. Undo with :Unlarge
 let g:LargeFile = 50
@@ -505,7 +515,7 @@ nnoremap <M-F7> :NERDTreeToggle<CR>
 " Tagbar opens on lef
 let g:tagbar_left = 1
 
-" Show all registers
+" Show all alphabetic registers
 com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
 
 " Show what F-keys do
@@ -518,8 +528,8 @@ function! NKKeys()
 	echo " F8  - (Normal/Insert) Spell-check  | (Visual) - Open selection in new window"
 	echo " F9  - Highlight search terms       |"
 	echo " F10 - Line numbers                 |"
-	echo " F11 - gVim decorations             |"
-	echo " F12 - Sync syntax                  |"
+	echo " F11 - Sync syntax                  |"
+	echo " F12 - Most recently used files     |"
 endfunction
 com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>

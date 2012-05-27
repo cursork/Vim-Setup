@@ -6,3 +6,6 @@ spell/en.utf-8.add.spl
 record
 backup
 undo
+mru_files
+LICENSE.txt
+bundle/*

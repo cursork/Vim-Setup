@@ -70,6 +70,8 @@ if has('gui_running')
 	if has('gui_macvim')
 		" Nice and decent Unicode support
 		set guifont=Menlo
+		" Lion full-screen mode - don't maximise horizontally
+		set fuoptions-=maxhorz
 	elseif (has('win32') || has('win64'))
 		" Consolas is nice, but has bad character support. Courier New has
 		" better, but is really not pretty, especially at smaller text sizes
@@ -281,7 +283,7 @@ if !exists('*SyntasticStatuslineFlag')
 		return ''
 	endfunction
 endif
-" HTML with {{templates}} is error-rific
+" HTML with {{templates}} is error-rific - don't pro-actively syntax check
 let g:syntastic_mode_map = {}
 let g:syntastic_mode_map['mode'] = 'active'
 let g:syntastic_mode_map['passive_filetypes'] = ['html', 'xml']
@@ -350,12 +352,6 @@ endif
 set foldlevelstart=99
 set foldmethod=indent
 
-" Numberwidth is how much space line numbers take up on the left-hand side.
-" Doesn't have an effect until :set number is used (mapped to F10 below).
-if exists('&numberwidth')
-	set numberwidth=6
-endif
-
 " Use mouse for normal mode and visual selection. Allow normal terminal
 " selection when in insert mode... allows logical selection of big chunks via
 " normal visual mode (esp. for splits, etc.) but also allows quick select,
@@ -396,6 +392,12 @@ nnoremap :BD :bd
 nnoremap :E  :e
 " Tab goes through windows in normal mode
 nnoremap <Tab> <C-w><C-w>
+
+" Numberwidth is how much space line numbers take up on the left-hand side.
+" Doesn't have an effect until :set number is used (mapped to F10 below).
+if exists('&numberwidth')
+	set numberwidth=6
+endif
 
 " Show/hide line numbers or relative numbers.
 " No line numbers -> line numbers -> relative line numbers

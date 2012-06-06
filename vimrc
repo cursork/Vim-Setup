@@ -3,14 +3,18 @@ scriptencoding utf-8
 set   encoding=utf-8
 
 " Use bundle directory for plugins, filetypes, etc.
-call pathogen#infect()
+" Gracefully degrade on systems where this is not installed or that are simply
+" too old to handle '#'s (i.e. version 6)
+silent! call pathogen#infect()
 
 " These must go before any changes to highlighting
 syntax enable
 filetype plugin indent on
 
 " Give up syntax highlighting on lines > 5000 chars long (default 3000)
-set synmaxcol=5000
+if has('+synmaxcol')
+	set synmaxcol=5000
+endif
 
 " Allow either light or dark BG
 if $COLORSCHEME =~'light' || has('gui_running')
@@ -96,7 +100,10 @@ set hidden
 " W stops :w! overwriting a readonly file if possible (believe this applies
 " only to filesystem read-only - not 'setlocal readonly').
 " Z stops the readonly flag being removed if you do do a :w!
-set cpoptions+=WZ
+set cpoptions+=W
+if v:version >= 700
+	set cpoptions+=Z
+endif
 
 " Persistent undo across edits of the same file
 if exists('+undofile')
@@ -283,10 +290,12 @@ if !exists('*SyntasticStatuslineFlag')
 		return ''
 	endfunction
 endif
-" HTML with {{templates}} is error-rific - don't pro-actively syntax check
-let g:syntastic_mode_map = {}
-let g:syntastic_mode_map['mode'] = 'active'
-let g:syntastic_mode_map['passive_filetypes'] = ['html', 'xml']
+" HTML with {{templates}} is error-rific
+if v:version >= 700
+	let g:syntastic_mode_map = {}
+	let g:syntastic_mode_map['mode'] = 'active'
+	let g:syntastic_mode_map['passive_filetypes'] = ['html', 'xml']
+endif
 
 " Status line is filename[RO] [filetype] : line, column current-proc <gap> char/hex char syntastic-error
 set statusline=\ %t%r%m\ %y\ :\ %-4.l,\ %-3.c\ %{NKCurrentProc()}\ %=%b/0x%B\ %{SyntasticStatuslineFlag()}
@@ -352,6 +361,12 @@ endif
 set foldlevelstart=99
 set foldmethod=indent
 
+" Numberwidth is how much space line numbers take up on the left-hand side.
+" Doesn't have an effect until :set number is used (mapped to F10 below).
+if exists('&numberwidth')
+	set numberwidth=6
+endif
+
 " Use mouse for normal mode and visual selection. Allow normal terminal
 " selection when in insert mode... allows logical selection of big chunks via
 " normal visual mode (esp. for splits, etc.) but also allows quick select,
@@ -365,7 +380,9 @@ let g:sql_type_default='mysql'
 " VCS plugin should default to vertical splits
 let VCSCommandSplit='vertical'
 " Clojure Rainbow parentheses
-let g:vimclojure#ParenRainbow=1
+if v:version >= 700
+	let g:vimclojure#ParenRainbow=1
+endif
 
 " Use ack ( betterthangrep.com ) instead. Filters out hidden files. Also
 " don't restrict by filetype (-a) in order to be a bit more grep-like.
@@ -392,12 +409,6 @@ nnoremap :BD :bd
 nnoremap :E  :e
 " Tab goes through windows in normal mode
 nnoremap <Tab> <C-w><C-w>
-
-" Numberwidth is how much space line numbers take up on the left-hand side.
-" Doesn't have an effect until :set number is used (mapped to F10 below).
-if exists('&numberwidth')
-	set numberwidth=6
-endif
 
 " Show/hide line numbers or relative numbers.
 " No line numbers -> line numbers -> relative line numbers

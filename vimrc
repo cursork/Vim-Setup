@@ -329,11 +329,11 @@ if v:version >= 702 && &term != 'pcterm'
 	if has('unix') && has('gui_running')
 		" So far only Menlo seems to have this - don't have Linux around to
 		" test what turns up though - so give it a go
-		set showbreak=↪···
+		set showbreak=↪·
 		set listchars+=extends:→
 	else
 		" Can't get curly right arrow to work in Windows :(
-		set showbreak=~\ \ \ 
+		set showbreak=~\ 
 		" ... or find a nice font with arrows
 		set listchars+=extends:>
 	endif
@@ -341,11 +341,26 @@ else
 	set listchars=tab:>\ 
 	set listchars+=trail:_
 	set listchars+=extends:>
-	set showbreak=~\ \ \ 
+	set showbreak=~\ 
 endif
 
 " Show above defined list characters
 set list
+
+" Gets us line wrapping at any character found in &breakat. End-result is line
+" breaks at the word level. Useful when reading/writing large text files in
+" Vim.
+function! NKLineBreaks()
+	if &list
+		setlocal nolist
+		setlocal linebreak
+		setlocal wrap
+	else
+		setlocal list
+		setlocal nolinebreak
+	endif
+endfunction
+com! -nargs=0 NKLineBreaks call NKLineBreaks()
 
 " Show nice list of ctrl-n-completes
 set wildmenu
@@ -552,16 +567,16 @@ cnoremap <F1> <C-[>
 
 " Show what F-keys do
 function! NKKeys()
-	echo " F3  - Map insert/delete to scroll  |"
-	echo " F4  - Format paragraph             | Alt-F4   - Toggle formatting"
-	echo " F5  - Toggle case-sensitive search |"
-	echo " F6  - Toggle paste                 | Alt-F6   - Toggle expand tabs"
-	echo " F7  - Toggle Tagbar                | Alt-F7   - Toggle NERD Tree"
-	echo " F8  - (Normal/Insert) Spell-check  | (Visual) - Open selection in new window"
-	echo " F9  - Highlight search terms       |"
-	echo " F10 - Line numbers                 |"
-	echo " F11 - Sync syntax                  |"
-	echo " F12 - Most recently used files     |"
+	echo " F3  - Map insert/delete to scroll   |"
+	echo " F4  - Wrap line | S-F4 - paragraph  | M-F4   - Toggle formatting"
+	echo " F5  - Toggle case-sensitive search  |"
+	echo " F6  - Toggle paste                  | M-F6   - Toggle expand tabs"
+	echo " F7  - Toggle Tagbar                 | M-F7   - Toggle NERD Tree"
+	echo " F8  - (Normal/Insert) Spell-check   | (Visual) - Open selection in new window"
+	echo " F9  - Highlight search terms        |"
+	echo " F10 - Line numbers                  |"
+	echo " F11 - Sync syntax                   |"
+	echo " F12 - Most recently used files      |"
 endfunction
 com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>

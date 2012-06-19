@@ -14,7 +14,10 @@ git clone https://github.com/pangloss/vim-javascript.git
 echo Cloning Tagbar...
 git clone https://github.com/majutsushi/tagbar.git
 
-echo Cloning Dokuwiki
+echo Cloning Dokuwiki...
 git clone https://github.com/nblock/vim-dokuwiki.git
+
+echo Cloning OpenBrowser...
+git clone https://github.com/tyru/open-browser.vim
 
 echo Done.

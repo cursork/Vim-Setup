@@ -84,8 +84,10 @@ if has('gui_running')
 		" so use it for double-width characters
 		set guifontwide=MingLiU
 		" Windows doesn't remember size, so set it manually
-		set lines=30
-		set columns=82
+		if !exists("s:vimrc_loaded_before")
+			set lines=30
+			set columns=82
+		endif
 	endif
 endif
 
@@ -580,5 +582,9 @@ function! NKKeys()
 endfunction
 com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>
+
+" Set a variable so some things aren't repeated on further sourcing
+" e.g. only resize the Window on launch of Vim
+let s:vimrc_loaded_before = 1
 
 " Fin

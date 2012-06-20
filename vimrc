@@ -277,10 +277,10 @@ set cinkeys-=:
 " being an angry red.
 let java_allow_cpp_keywords=1
 
-" When scrolling sideways, move only 1 column at a time and keep 10 characters
+" When scrolling sideways, move only 1 column at a time and keep 1 character
 " of context. Not going to be great on slow terminals...
 set sidescroll=1
-set sidescrolloff=10
+set sidescrolloff=1
 set scrolloff=10     " Keep 10 context lines at top/bottom of screen
 set noerrorbells     " Quiet
 set lazyredraw       " Redraw lazily...

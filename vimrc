@@ -71,10 +71,6 @@ if has('gui_running')
 	inoremap <F11> <C-c>:call ToggleGvimBits()<CR>a
 	vnoremap <F11> <C-c>:call ToggleGvimBits()<CR>gv
 
-	" gvim (MacVim at least) beeps but doesn't work with visual bells, so to
-	" make it silent this is here
-	set novisualbell
-
 	if has('gui_macvim')
 		" Nice and decent Unicode support
 		set guifont=Menlo
@@ -286,9 +282,12 @@ let java_allow_cpp_keywords=1
 set sidescroll=1
 set sidescrolloff=1
 set scrolloff=10     " Keep 10 context lines at top/bottom of screen
-set noerrorbells     " Quiet
 set lazyredraw       " Redraw lazily... (e.g. not during macro invocation)
 set shortmess=aTItoO " Make Vim less wordy (e.g. [RO] instead of readonly...)
+" Make Vim really really quiet
+set noerrorbells     " Quiet for most common errors...
+set visualbell       " ...catch odd cases (esc in normal mode) with vbells...
+set t_vb=            " ...but stop vbells actually doing anything
 
 " Dummy this function if it doesn't exist, as it is used by the status line
 if !exists('*SyntasticStatuslineFlag')
@@ -587,7 +586,7 @@ endfunction
 com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>
 
-" Set a variable so some things aren't repeated on further sourcing
+" Set a variable so some things aren't repeated on further sourcing of .vimrc
 " e.g. only resize the Window on launch of Vim
 let s:vimrc_loaded_before = 1
 

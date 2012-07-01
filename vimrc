@@ -3,14 +3,18 @@ scriptencoding utf-8
 set   encoding=utf-8
 
 " Use bundle directory for plugins, filetypes, etc.
-call pathogen#infect()
+" Gracefully degrade on systems where this is not installed or that are simply
+" too old to handle '#'s (i.e. version 6)
+silent! call pathogen#infect()
 
 " These must go before any changes to highlighting
 syntax enable
 filetype plugin indent on
 
 " Give up syntax highlighting on lines > 5000 chars long (default 3000)
-set synmaxcol=5000
+if has('+synmaxcol')
+	set synmaxcol=5000
+endif
 
 " Allow either light or dark BG
 if $COLORSCHEME =~'light' || has('gui_running')
@@ -19,14 +23,20 @@ if $COLORSCHEME =~'light' || has('gui_running')
 
 	" ...but needs some refinement
 	highlight CursorLine ctermbg=lightgrey cterm=none gui=none guibg=#F0F0F0
-	highlight ColorColumn guibg=#fcfcc0
+	highlight ColorColumn guibg=#FCFCC0
+	" CursorLine bg overrides Error bg, meaning we have light-on-light which is
+	" horrible. Standout seems to have the desired effect: It reverses the
+	" colours so red is the background and overrides the cursorline
+	highlight Error gui=standout guifg=#FF0000 guibg=#FFFFFF
 	highlight LineNr gui=italic guibg=#EEEEBB guifg=#000000
 	" Slightly nicer Visual mode
-	highlight Visual guibg=#cceefc
+	highlight Visual guibg=#CCEEFC
 	" nicotine doesn't highlight identifiers by default
 	highlight Identifier ctermfg=blue guifg=blue
 	" Bold grey for hidden items
 	highlight Ignore guifg=#999999 gui=bold
+	" Comments are red, DiffText is set to red background... Not a good combo
+	highlight DiffText term=reverse cterm=bold ctermbg=12 gui=bold guifg=white guibg=red
 else
 	" Elflord is nice on a terminal but absolutely vile in gVim
 	colorscheme elflord
@@ -78,8 +88,10 @@ if has('gui_running')
 		" so use it for double-width characters
 		set guifontwide=MingLiU
 		" Windows doesn't remember size, so set it manually
-		set lines=30
-		set columns=82
+		if !exists("s:vimrc_loaded_before")
+			set lines=30
+			set columns=82
+		endif
 	endif
 endif
 
@@ -94,7 +106,10 @@ set hidden
 " W stops :w! overwriting a readonly file if possible (believe this applies
 " only to filesystem read-only - not 'setlocal readonly').
 " Z stops the readonly flag being removed if you do do a :w!
-set cpoptions+=WZ
+set cpoptions+=W
+if v:version >= 700
+	set cpoptions+=Z
+endif
 
 " Persistent undo across edits of the same file
 if exists('+undofile')
@@ -142,8 +157,6 @@ set incsearch
 " available nonetheless.
 set nohlsearch
 nnoremap <F9> :set hlsearch!<CR>:set hlsearch?<CR>
-" Trial this: Automatically put me in Perl-like 'very magic' mode for searches
-nnoremap / /\v
 
 " Cursor line only shows in active window.
 if exists('&cursorline')
@@ -268,7 +281,10 @@ set cinkeys-=:
 " being an angry red.
 let java_allow_cpp_keywords=1
 
-set sidescroll=10    " When scrolling sideways, jump 10 columns at a time
+" When scrolling sideways, move only 1 column at a time and keep 1 character
+" of context. Not going to be great on slow terminals...
+set sidescroll=1
+set sidescrolloff=1
 set scrolloff=10     " Keep 10 context lines at top/bottom of screen
 set noerrorbells     " Quiet
 set lazyredraw       " Redraw lazily... (e.g. not during macro invocation)
@@ -280,9 +296,12 @@ if !exists('*SyntasticStatuslineFlag')
 		return ''
 	endfunction
 endif
-" HTML with {{templates}} is error-rific - don't pro-actively syntax check
-let g:syntastic_mode_map = {}
-let g:syntastic_mode_map['passive_filetypes'] = ['html']
+" HTML with {{templates}} is error-rific
+if v:version >= 700
+	let g:syntastic_mode_map = {}
+	let g:syntastic_mode_map['mode'] = 'active'
+	let g:syntastic_mode_map['passive_filetypes'] = ['html', 'xml']
+endif
 
 " Status line is filename[RO] [filetype] : line, column current-proc <gap> char/hex char syntastic-error
 set statusline=\ %t%r%m\ %y\ :\ %-4.l,\ %-3.c\ %{NKCurrentProc()}\ %=%b/0x%B\ %{SyntasticStatuslineFlag()}
@@ -316,11 +335,11 @@ if v:version >= 702 && &term != 'pcterm'
 	if has('unix') && has('gui_running')
 		" So far only Menlo seems to have this - don't have Linux around to
 		" test what turns up though - so give it a go
-		set showbreak=↪···
+		set showbreak=↪·
 		set listchars+=extends:→
 	else
 		" Can't get curly right arrow to work in Windows :(
-		set showbreak=~\ \ \ 
+		set showbreak=~\ 
 		" ... or find a nice font with arrows
 		set listchars+=extends:>
 	endif
@@ -328,11 +347,26 @@ else
 	set listchars=tab:>\ 
 	set listchars+=trail:_
 	set listchars+=extends:>
-	set showbreak=~\ \ \ 
+	set showbreak=~\ 
 endif
 
 " Show above defined list characters
 set list
+
+" Gets us line wrapping at any character found in &breakat. End-result is line
+" breaks at the word level. Useful when reading/writing large text files in
+" Vim.
+function! NKLineBreaks()
+	if &list
+		setlocal nolist
+		setlocal linebreak
+		setlocal wrap
+	else
+		setlocal list
+		setlocal nolinebreak
+	endif
+endfunction
+com! -nargs=0 NKLineBreaks call NKLineBreaks()
 
 " Show nice list of ctrl-n-completes
 set wildmenu
@@ -348,6 +382,12 @@ endif
 set foldlevelstart=99
 set foldmethod=indent
 
+" Numberwidth is how much space line numbers take up on the left-hand side.
+" Doesn't have an effect until :set number is used (mapped to F10 below).
+if exists('&numberwidth')
+	set numberwidth=6
+endif
+
 " Use mouse for normal mode and visual selection. Allow normal terminal
 " selection when in insert mode... allows logical selection of big chunks via
 " normal visual mode (esp. for splits, etc.) but also allows quick select,
@@ -361,7 +401,9 @@ let g:sql_type_default='mysql'
 " VCS plugin should default to vertical splits
 let VCSCommandSplit='vertical'
 " Clojure Rainbow parentheses
-let g:vimclojure#ParenRainbow=1
+if v:version >= 700
+	let g:vimclojure#ParenRainbow=1
+endif
 
 " Use ack ( betterthangrep.com ) instead. Filters out hidden files. Also
 " don't restrict by filetype (-a) in order to be a bit more grep-like.
@@ -388,12 +430,6 @@ nnoremap :BD :bd
 nnoremap :E  :e
 " Tab goes through windows in normal mode
 nnoremap <Tab> <C-w><C-w>
-
-" Numberwidth is how much space line numbers take up on the left-hand side.
-" Doesn't have an effect until :set number is used (mapped to F10 below).
-if exists('&numberwidth')
-	set numberwidth=6
-endif
 
 " Show/hide line numbers or relative numbers.
 " No line numbers -> line numbers -> relative line numbers
@@ -510,32 +546,49 @@ inoremap  <M-F4> <Esc>:call NKToggleFormatting()<CR>a
 vnoremap  <M-F4> <Esc>:call NKToggleFormatting()<CR>gv
 
 " Useful toggles
-nnoremap <F5>   :set ignorecase!<CR>:set ignorecase?<CR>
+nnoremap <F5>   :setlocal wrap!<CR>:setlocal wrap?<CR>
+nnoremap <M-F5> :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>
-nnoremap <M-F6> :set expandtab!<CR>:set expandtab?<CR>
+nnoremap <M-F6> :setlocal expandtab!<CR>:setlocal expandtab?<CR>
 nnoremap <F7>   :TagbarToggle<CR>
 nnoremap <M-F7> :NERDTreeToggle<CR>
 
-" Tagbar opens on lef
-let g:tagbar_left = 1
+" Tagbar opens on left, and is much narrower
+let g:tagbar_left=1
+let g:tagbar_width=25
 
 " Show all alphabetic registers
 com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
 
+" Custom Digraphs
+" Square and cube superscripts
+digraphs ^2 178
+digraphs ^3 179
+
+" Some keyboards make it too easy to hit F1 when one means escape
+noremap  <F1> <C-[>
+vnoremap <F1> <C-[>
+lnoremap <F1> <C-[>
+cnoremap <F1> <C-[>
+
 " Show what F-keys do
 function! NKKeys()
-	echo " F3  - Map insert/delete to scroll  |"
-	echo " F4  - Format paragraph             | Alt-F4   - Toggle formatting"
-	echo " F5  - Toggle case-sensitive search |"
-	echo " F6  - Toggle paste                 | Alt-F6   - Toggle expand tabs"
-	echo " F7  - Toggle Tagbar                | Alt-F7   - Toggle NERD Tree"
-	echo " F8  - (Normal/Insert) Spell-check  | (Visual) - Open selection in new window"
-	echo " F9  - Highlight search terms       |"
-	echo " F10 - Line numbers                 |"
-	echo " F11 - Sync syntax                  |"
-	echo " F12 - Most recently used files     |"
+	echo " F3  - Map insert/delete to scroll   |"
+	echo " F4  - Wrap line | S-F4 - paragraph  | M-F4   - Toggle formatting"
+	echo " F5  - Toggle case-sensitive search  |"
+	echo " F6  - Toggle paste                  | M-F6   - Toggle expand tabs"
+	echo " F7  - Toggle Tagbar                 | M-F7   - Toggle NERD Tree"
+	echo " F8  - (Normal/Insert) Spell-check   | (Visual) - Open selection in new window"
+	echo " F9  - Highlight search terms        |"
+	echo " F10 - Line numbers                  |"
+	echo " F11 - Sync syntax                   |"
+	echo " F12 - Most recently used files      |"
 endfunction
 com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>
+
+" Set a variable so some things aren't repeated on further sourcing
+" e.g. only resize the Window on launch of Vim
+let s:vimrc_loaded_before = 1
 
 " Fin

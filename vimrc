@@ -61,6 +61,10 @@ if has('gui_running')
 	inoremap <F11> <C-c>:call ToggleGvimBits()<CR>a
 	vnoremap <F11> <C-c>:call ToggleGvimBits()<CR>gv
 
+	" gvim (MacVim at least) beeps but doesn't work with visual bells, so to
+	" make it silent this is here
+	set novisualbell
+
 	if has('gui_macvim')
 		" Nice and decent Unicode support
 		set guifont=Menlo
@@ -267,7 +271,7 @@ let java_allow_cpp_keywords=1
 set sidescroll=10    " When scrolling sideways, jump 10 columns at a time
 set scrolloff=10     " Keep 10 context lines at top/bottom of screen
 set noerrorbells     " Quiet
-set lazyredraw       " Redraw lazily...
+set lazyredraw       " Redraw lazily... (e.g. not during macro invocation)
 set shortmess=aTItoO " Make Vim less wordy (e.g. [RO] instead of readonly...)
 
 " Dummy this function if it doesn't exist, as it is used by the status line

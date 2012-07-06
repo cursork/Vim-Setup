@@ -2,6 +2,11 @@
 scriptencoding utf-8
 set   encoding=utf-8
 
+" I see no real reason for the default to be 2. 3 allows up to 4 bytes
+" (including initial letter) to be shown combined; mirroring UTF-8 more
+" closely.
+set maxcombine=3
+
 " Use bundle directory for plugins, filetypes, etc.
 " Gracefully degrade on systems where this is not installed or that are simply
 " too old to handle '#'s (i.e. version 6)
@@ -176,8 +181,10 @@ set tabstop=4
 " ... and the shiftwidth to go with it
 set shiftwidth=4
 " Ignoring the above; if someone is enough of a *&^% to indent with spaces, I
-" should try to be consistent. N.B. requires autoindent or smartindent on.
+" should try to be consistent. N.B. requires autoindent or smartindent on
+" rather than indentexpr or cindent (which often isn't true in source code!)
 set copyindent
+set preserveindent
 
 " Can backspace around end of lines, etc
 set backspace=indent,eol,start 
@@ -207,9 +214,6 @@ endif
 
 " Open selection in new buffer (TODO function-ise)
 vnoremap <F8> <Esc><CR>:let b:nk_old_a_register=@a<CR>gvy:new<CR>pggdd<C-w>p:let @a=b:nk_old_a_register<CR><C-w>p:let &filetype=input('Filetype? ')<CR>
-
-nnoremap <F11> :syntax sync fromstart<CR>
-inoremap <F11> <Esc>:syntax sync fromstart<CR>a
 
 " Use perl to find the current proc.
 if has("perl")

@@ -9,4 +9,6 @@ setlocal iskeyword+=_,$,@,%,#,:
 setlocal complete-=i
 
 " Spell-check comments
-syn match perlComment "#.*" contains=perlTodo,@Spell
+syntax match perlComment "#.*" contains=perlTodo,@Spell
+" Prevent it being set to 'toplevel' and spell-checking 'Normal' text
+syntax spell default

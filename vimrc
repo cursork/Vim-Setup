@@ -288,6 +288,7 @@ set sidescrolloff=1
 set scrolloff=10     " Keep 10 context lines at top/bottom of screen
 set lazyredraw       " Redraw lazily... (e.g. not during macro invocation)
 set shortmess=aTItoO " Make Vim less wordy (e.g. [RO] instead of readonly...)
+set confirm          " Ask to save edited buffers when quitting (don't error)
 " Make Vim really really quiet
 set noerrorbells     " Quiet for most common errors...
 set visualbell       " ...catch odd cases (esc in normal mode) with vbells...

@@ -160,7 +160,7 @@ set nohlsearch
 nnoremap <F9> :set hlsearch!<CR>:set hlsearch?<CR>
 
 " Cursor line only shows in active window.
-if exists('&cursorline')
+if exists('&cursorline') && has('autocmd')
 	autocmd BufWinEnter * setlocal cursorline
 	autocmd WinEnter    * setlocal cursorline
 	autocmd WinLeave    * setlocal nocursorline
@@ -168,7 +168,7 @@ endif
 " Current directory is wherever this file is.
 if exists('+autochdir')
 	set autochdir
-else
+elseif has('autocmd')
 	autocmd BufWinEnter  * lcd %:p:h
 	autocmd BufWritePost * lcd %:p:h
 	autocmd WinEnter     * lcd %:p:h
@@ -293,6 +293,10 @@ set confirm          " Ask to save edited buffers when quitting (don't error)
 set noerrorbells     " Quiet for most common errors...
 set visualbell       " ...catch odd cases (esc in normal mode) with vbells...
 set t_vb=            " ...but stop vbells actually doing anything
+" gVim resets t_vb, so set up a hook to activate after the GUI is initialised
+if has('autocmd')
+	autocmd GUIEnter * set visualbell t_vb=
+endif
 
 " Dummy this function if it doesn't exist, as it is used by the status line
 if !exists('*SyntasticStatuslineFlag')

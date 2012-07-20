@@ -565,6 +565,11 @@ nnoremap <M-F7> :NERDTreeToggle<CR>
 let g:tagbar_left=1
 let g:tagbar_width=25
 
+" NERDTree should not interfere with netrw
+" a) I don't have a problem with netrw
+" b) NERDTree doesn't know what to do with URLs
+let g:NERDTreeHijackNetrw=0
+
 " Show all alphabetic registers
 com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
 

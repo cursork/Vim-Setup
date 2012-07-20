@@ -8,6 +8,9 @@ setlocal iskeyword+=_,$,@,%,#,:
 " <C-X><C-I> can be used to do this manually
 setlocal complete-=i
 
+" Use perldoc when 'K' is used to lookup a keyword
+set keywordprg=perldoc
+
 " Spell-check comments
 syntax match perlComment "#.*" contains=perlTodo,@Spell
 " Prevent it being set to 'toplevel' and spell-checking 'Normal' text

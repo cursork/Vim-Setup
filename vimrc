@@ -413,19 +413,20 @@ if v:version >= 700
 	let g:vimclojure#ParenRainbow=1
 endif
 
+" Perldoc Path is where the Perldoc plugin will store its generated files.
+if has('unix')
+	let g:Perldoc_path='/tmp/'
+else
+	let g:Perldoc_path=$TEMP
+endif
+
 " Use ack ( betterthangrep.com ) instead. Filters out hidden files. Also
 " don't restrict by filetype (-a) in order to be a bit more grep-like.
-set grepprg=ack\ -G\ '^[^\\.]'\ -a
-
-" Get help files sorted
-if has('unix')
-	let s:helptagsdir='~/.vim/doc'
+if (has('win32') || has('win64'))
+	" And Windows doesn't like single quotes...
+	set grepprg=ack\ -G\ "^[^\\.]"\ -a
 else
-	" Assume Windows
-	let s:helptagsdir='$VIM/vimfiles/doc'
-endif
-if isdirectory(s:helptagsdir)
-	helptags s:helptagsdir
+	set grepprg=ack\ -G\ '^[^\\.]'\ -a
 endif
 
 " Too slow...

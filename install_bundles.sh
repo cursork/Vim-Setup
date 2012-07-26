@@ -20,4 +20,7 @@ git clone https://github.com/nblock/vim-dokuwiki.git
 echo Cloning OpenBrowser...
 git clone https://github.com/tyru/open-browser.vim
 
+echo Cloning ActionScript syntax...
+git clone https://github.com/vim-scripts/actionscript.vim--Leider.git
+
 echo Done.

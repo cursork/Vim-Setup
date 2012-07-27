@@ -23,4 +23,7 @@ git clone https://github.com/tyru/open-browser.vim
 echo Cloning ActionScript syntax...
 git clone https://github.com/vim-scripts/actionscript.vim--Leider.git
 
+echo Cloning Elixir
+git clone https://github.com/elixir-lang/vim-elixir.git
+
 echo Done.

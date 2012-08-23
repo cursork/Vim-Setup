@@ -253,7 +253,13 @@ if has("perl")
 
 	sub new_temp_perl_file {
 		my ($fh, $fname) = File::Temp::tempfile(SUFFIX => '.pl');
-		print $fh "use v5.012;\nuse warnings;\n\n\n";
+		print $fh <<'PERL';
+use v5.012;
+use warnings;
+use Data::Dumper;
+
+
+PERL
 		close $fh;
 		VIM::DoCommand "edit $fname";
 		VIM::DoCommand "normal G";

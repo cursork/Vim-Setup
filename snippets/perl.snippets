@@ -1,19 +1,6 @@
 # Define an appropriate d::ump function
-snippet usedump
-	BEGIN {
-		eval {
-			require Data::Dump;
-			*{d::ump} = sub {
-				return Data::Dump::dump(@_);
-			};
-		};
-		if ($@) {
-			require Data::Dumper;
-			*{d::ump} = sub {
-				return Data::Dumper->Dump([\@_]);
-			};
-		}
-	}
+snippet dd
+	Data::Dumper->Dump([${1}])
 # #!/usr/bin/perl
 snippet #!
 	#!/usr/bin/perl

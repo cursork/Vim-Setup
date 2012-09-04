@@ -56,20 +56,21 @@ set winaltkeys=no
 if has('gui_running')
 	" Hide decorations by default
 	" m = menubar, r = right scrollbar, L = left scrollbar (in vert split),
-	" T = toolbar
+	" T = toolbar, e = plain Vim tabs
 	set guioptions-=m
 	set guioptions-=r
-	set guioptions-=T
 	set guioptions-=L
-	" Use console instead of popup windows
+	set guioptions-=T
+	set guioptions-=e
+	" Use console instead of popup windows for confirmations
 	set guioptions+=c
 
 	" Toggle menubar/toolbar/scrollbar with F11
 	function! ToggleGvimBits()
 		if &go=~#'m'
-			set go-=mrTL
+			set go-=mrTLe
 		else
-			set go+=mrTL
+			set go+=mrTLe
 		endif
 	endfunction
 	nnoremap <F11> :call ToggleGvimBits()<CR>
@@ -219,6 +220,7 @@ vnoremap <F8> <Esc><CR>:let b:nk_old_a_register=@a<CR>gvy:new<CR>pggdd<C-w>p:let
 if has("perl")
 	perl <<EOF
 	use strict;
+	use Encode;
 	use File::Temp ();
 
 	sub current_proc {
@@ -256,6 +258,8 @@ if has("perl")
 		print $fh <<'PERL';
 use v5.012;
 use warnings;
+use utf8;
+
 use Data::Dumper;
 
 
@@ -263,6 +267,27 @@ PERL
 		close $fh;
 		VIM::DoCommand "edit $fname";
 		VIM::DoCommand "normal G";
+	}
+
+	sub _apply_to_cur_line {
+		my ($func) = @_;
+
+		my ($line_number) = $main::curwin->Cursor;
+
+		my $cur_line = Encode::decode('UTF-8', $main::curbuf->Get($line_number));
+		my $new_line = Encode::encode('UTF-8', $func->($cur_line));
+
+		$main::curbuf->Set($line_number, $new_line);
+	}
+
+	sub decompose {
+		require Unicode::Normalize;
+		_apply_to_cur_line(\&Unicode::Normalize::NFD);
+	}
+
+	sub compose {
+		require Unicode::Normalize;
+		_apply_to_cur_line(\&Unicode::Normalize::NFC);
 	}
 EOF
 
@@ -277,6 +302,18 @@ function! NKCurrentProc()
 		return procName
 	endif
 endfunction
+function! NKDecompose()
+	if has("perl")
+		perl decompose()
+	endif
+endfunction
+com! -nargs=0 NKDecompose call NKDecompose()
+function! NKCompose()
+	if has("perl")
+		perl compose()
+	endif
+endfunction
+com! -nargs=0 NKCompose call NKCompose()
 
 " 'LABEL:' shunting to the left is really not useful in most places. If I end
 " up writing any amount of C, then I shall just have to remember to re-indent
@@ -294,7 +331,7 @@ set sidescrolloff=1
 set scrolloff=10     " Keep 10 context lines at top/bottom of screen
 set lazyredraw       " Redraw lazily... (e.g. not during macro invocation)
 set shortmess=aTItoO " Make Vim less wordy (e.g. [RO] instead of readonly...)
-set confirm          " Ask to save edited buffers when quitting (don't error)
+set noconfirm        " Error without asking to save edited buffers when quitting
 " Make Vim really really quiet
 set noerrorbells     " Quiet for most common errors...
 set visualbell       " ...catch odd cases (esc in normal mode) with vbells...

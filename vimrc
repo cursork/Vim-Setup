@@ -270,50 +270,66 @@ PERL
 	}
 
 	sub _apply_to_cur_line {
-		my ($func) = @_;
+		my ($func, %opts) = @_;
 
 		my ($line_number) = $main::curwin->Cursor;
 
-		my $cur_line = Encode::decode('UTF-8', $main::curbuf->Get($line_number));
-		my $new_line = Encode::encode('UTF-8', $func->($cur_line));
+		my $cur_line = $main::curbuf->Get($line_number);
+		if ($opts{'encode_decode'}) {
+			$cur_line = Encode::decode('UTF-8', $cur_line);
+		}
+		my $new_line = $func->($cur_line);
+		if ($opts{'encode_decode'}) {
+			$new_line = Encode::encode('UTF-8', $new_line);
+		}
 
 		$main::curbuf->Set($line_number, $new_line);
 	}
 
 	sub decompose {
 		require Unicode::Normalize;
-		_apply_to_cur_line(\&Unicode::Normalize::NFD);
+		_apply_to_cur_line(\&Unicode::Normalize::NFD, encode_decode => 1);
 	}
 
 	sub compose {
 		require Unicode::Normalize;
-		_apply_to_cur_line(\&Unicode::Normalize::NFC);
+		_apply_to_cur_line(\&Unicode::Normalize::NFC, encode_decode => 1);
+	}
+
+	sub fix_double_encoded_utf8 {
+		_apply_to_cur_line(sub {
+			my $line = Encode::decode('UTF-8', $_[0]);
+			my $new  = '';
+			foreach (split qr//, $line) {
+				my $ord = sprintf '\x%x', ord($_);
+				$new .= eval "\"$ord\"";
+			}
+			return $new;
+		});
 	}
 EOF
 
-function! NKTempPerlFile()
-	perl new_temp_perl_file()
-endfunction
-com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
-endif
-function! NKCurrentProc()
-	if has("perl")
+	function! NKTempPerlFile()
+		perl new_temp_perl_file()
+	endfunction
+	com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
+	function! NKCurrentProc()
 		perl current_proc()
 		return procName
-	endif
-endfunction
-function! NKDecompose()
-	if has("perl")
+	endfunction
+	function! NKDecompose()
 		perl decompose()
-	endif
-endfunction
-com! -nargs=0 NKDecompose call NKDecompose()
-function! NKCompose()
-	if has("perl")
+	endfunction
+	com! -nargs=0 NKDecompose call NKDecompose()
+	function! NKCompose()
 		perl compose()
-	endif
-endfunction
-com! -nargs=0 NKCompose call NKCompose()
+	endfunction
+	com! -nargs=0 NKCompose call NKCompose()
+	function! NKFixDoubleUTF8()
+		perl fix_double_encoded_utf8()
+	endfunction
+	com! -nargs=0 NKFixDoubleUTF8 call NKFixDoubleUTF8()
+endif
 
 " 'LABEL:' shunting to the left is really not useful in most places. If I end
 " up writing any amount of C, then I shall just have to remember to re-indent
@@ -360,17 +376,6 @@ set laststatus=2
 
 " Default history of 20 lines is not so good
 set history=10000
-
-" Allow manual hard wrapping with gq at 79 chars, formatoptions - t stops it
-" autowrapping. Colorcolumn adds a nice line to the right hand side.
-set textwidth=79
-set formatoptions-=t
-if exists('+colorcolumn')
-	set colorcolumn=+1
-endif
-" When joining sentence lines with 'J' (lines ending with '.'/'?'/'!'), use one
-" space instead of two.
-set nojoinspaces
 
 " Don't softwrap by default... But if we do turn it on, we will indicate
 " softwraps with a curled arrow or a tilde - done in >=7.2 stuff below.
@@ -575,6 +580,17 @@ function! NKDocumentRead()
 endfunction
 nnoremap <F3> :call NKDocumentRead()<CR>
 
+" Allow manual hard wrapping with gq at 79 chars, formatoptions - t stops it
+" autowrapping. Colorcolumn adds a nice line to the right hand side.
+set textwidth=79
+set formatoptions-=t
+if exists('+colorcolumn')
+	set colorcolumn=+1
+endif
+" When joining sentence lines with 'J' (lines ending with '.'/'?'/'!'), use one
+" space instead of two.
+set nojoinspaces
+
 " Reformat line
 nnoremap <F4> :execute 'normal gww'<CR>
 inoremap <F4> <Esc>:execute 'normal gww'<CR>a
@@ -583,6 +599,12 @@ nnoremap <S-F4> :execute 'normal gwap'<CR>
 inoremap <S-F4> <Esc>:execute 'normal gwap'<CR>a
 " Reformat selection
 vnoremap <F4> gw
+
+" Join all paragraphs / selected text
+function! NKJoinParagraphs()
+	'<,'>s/.\zs\n\ze./ /
+endfunction
+vnoremap <F3> <Esc>:call NKJoinParagraphs()<CR>
 
 " Toggle automatic formatting of text files
 function! NKToggleFormatting()
@@ -603,7 +625,7 @@ nnoremap <M-F5> :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>
 nnoremap <M-F6> :setlocal expandtab!<CR>:setlocal expandtab?<CR>
 nnoremap <F7>   :TagbarToggle<CR>
-nnoremap <M-F7> :NERDTreeToggle<CR>
+nnoremap <M-F7> :NERDTreeTabsToggle<CR>
 
 " Tagbar opens on left, and is much narrower
 let g:tagbar_left=1
@@ -630,7 +652,7 @@ cnoremap <F1> <C-[>
 
 " Show what F-keys do
 function! NKKeys()
-	echo " F3  - Map insert/delete to scroll   |"
+	echo " F3  - Map insert/delete to scroll   | (Visual) - Join paragraphs"
 	echo " F4  - Wrap line | S-F4 - paragraph  | M-F4   - Toggle formatting"
 	echo " F5  - Toggle case-sensitive search  |"
 	echo " F6  - Toggle paste                  | M-F6   - Toggle expand tabs"

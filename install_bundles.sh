@@ -26,4 +26,7 @@ git clone https://github.com/vim-scripts/actionscript.vim--Leider.git
 echo Cloning Elixir
 git clone https://github.com/elixir-lang/vim-elixir.git
 
+echo Cloning NERDTreeTabs
+git clone https://github.com/jistr/vim-nerdtree-tabs.git
+
 echo Done.

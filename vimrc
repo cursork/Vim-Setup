@@ -253,9 +253,8 @@ if has("perl")
 		VIM::DoCommand "let procName='$proc_name'";
 	}
 
-	sub new_temp_perl_file {
-		my ($fh, $fname) = File::Temp::tempfile(SUFFIX => '.pl');
-		print $fh <<'PERL';
+	my $file_defs = {
+		'perl' => ['pl', <<'PERL'],
 use v5.012;
 use warnings;
 use utf8;
@@ -264,7 +263,16 @@ use Data::Dumper;
 
 
 PERL
+		'xml' => ['xml', "<?xml version='1.0' encoding='utf-8'?>\n\n"],
+	};
+	sub new_temp_file {
+		my ($type) = @_;
+		my ($suffix, $content) = @{$file_defs->{$type}};
+
+		my ($fh, $fname) = File::Temp::tempfile(SUFFIX => '.' . $suffix);
+		print $fh $content;
 		close $fh;
+
 		VIM::DoCommand "edit $fname";
 		VIM::DoCommand "normal G";
 	}
@@ -310,9 +318,13 @@ PERL
 EOF
 
 	function! NKTempPerlFile()
-		perl new_temp_perl_file()
+		perl new_temp_file('perl')
 	endfunction
 	com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
+	function! NKTempXMLFile()
+		perl new_temp_file('xml')
+	endfunction
+	com! -nargs=0 NKTempXMLFile call NKTempXMLFile()
 	function! NKCurrentProc()
 		perl current_proc()
 		return procName

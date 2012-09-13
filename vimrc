@@ -236,6 +236,11 @@ if has("perl")
 				sql  => qr/^\s*create\s+(?:table|procedure)\s+(\S+)\b/i,
 				java => qr{^\s*(?:public|private|protected)\s*(?:static)?\s+\S+\s+(\S+)\s*\(},
 				perl => qr{^\s*sub\s+(\S+)\s*\{},
+				# "function foo {..." and # foo [:=] function (...
+				javascript => qr{
+						(?:^\s*function\s+(\S+)\s*\()|
+						(?:(?:\s|^)(\S+)\s*[=:]\s*function\s*\()
+					}x,
 			}->{$ftype};
 		if (!defined $expression) {
 			VIM::DoCommand "let procName=''";
@@ -243,11 +248,15 @@ if has("perl")
 		}
 
 		my $proc_name = '';
-		for my $i (reverse(1 .. $line_number)) {
+		LINE: for my $i (reverse(1 .. $line_number)) {
 			my $line = $curbuf->Get($i);
-			if ($line =~ $expression) {
-				$proc_name = ": $1";
-				last;
+			if (my @matches = $line =~ $expression) {
+				foreach (@matches) {
+					if ($_) {
+						$proc_name = ": $_";
+						last LINE;
+					}
+				}
 			}
 		}
 		VIM::DoCommand "let procName='$proc_name'";

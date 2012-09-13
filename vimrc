@@ -625,7 +625,7 @@ vnoremap <F4> gw
 function! NKJoinParagraphs()
 	'<,'>s/.\zs\n\ze./ /
 endfunction
-vnoremap <F3> <Esc>:call NKJoinParagraphs()<CR>
+vnoremap <S-F4> <Esc>:call NKJoinParagraphs()<CR>
 
 " Toggle automatic formatting of text files
 function! NKToggleFormatting()
@@ -673,16 +673,17 @@ cnoremap <F1> <C-[>
 
 " Show what F-keys do
 function! NKKeys()
-	echo " F3  - Map insert/delete to scroll   | (Visual) - Join paragraphs"
-	echo " F4  - Wrap line | S-F4 - paragraph  | M-F4   - Toggle formatting"
-	echo " F5  - Toggle case-sensitive search  |"
-	echo " F6  - Toggle paste                  | M-F6   - Toggle expand tabs"
-	echo " F7  - Toggle Tagbar                 | M-F7   - Toggle NERD Tree"
-	echo " F8  - (Normal/Insert) Spell-check   | (Visual) - Open selection in new window"
-	echo " F9  - Highlight search terms        |"
-	echo " F10 - Line numbers                  |"
-	echo " F11 - Sync syntax                   |"
-	echo " F12 - Most recently used files      |"
+	echo " F3   - Map insert/delete to scroll   |"
+	echo " F4   - Wrap line                     | M-F4     - Toggle formatting"
+	echo " S-F4 - Wrap paragraph                | (Visual) - Join paragraphs"
+	echo " F5   - Toggle case-sensitive search  |"
+	echo " F6   - Toggle paste                  | M-F6     - Toggle expand tabs"
+	echo " F7   - Toggle Tagbar                 | M-F7     - Toggle NERD Tree"
+	echo " F8   - (Normal/Insert) Spell-check   | (Visual) - Open selection in new window"
+	echo " F9   - Highlight search terms        |"
+	echo " F10  - Line numbers                  |"
+	echo " F11  - Sync syntax                   |"
+	echo " F12  - Most recently used files      |"
 endfunction
 com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>

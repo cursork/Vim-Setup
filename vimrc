@@ -334,10 +334,6 @@ EOF
 		perl new_temp_file('xml')
 	endfunction
 	com! -nargs=0 NKTempXMLFile call NKTempXMLFile()
-	function! NKCurrentProc()
-		perl current_proc()
-		return procName
-	endfunction
 	function! NKDecompose()
 		perl decompose()
 	endfunction
@@ -351,6 +347,12 @@ EOF
 	endfunction
 	com! -nargs=0 NKFixDoubleUTF8 call NKFixDoubleUTF8()
 endif
+function! NKCurrentProc()
+	if has("perl")
+		perl current_proc()
+		return procName
+	endif
+endfunction
 
 " 'LABEL:' shunting to the left is really not useful in most places. If I end
 " up writing any amount of C, then I shall just have to remember to re-indent

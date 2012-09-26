@@ -408,8 +408,22 @@ let g:omni_sql_no_default_maps=1
 let g:sql_type_default='mysql'
 " VCS plugin should default to vertical splits
 let VCSCommandSplit='vertical'
-" Clojure Rainbow parentheses
+"
+" Clojure Magic - rainbow parens, highlighting :used bits, nailgun evaluation
+" of clojure files / help / etc.
+" To setup Nailgun for a Clojure Project:
+"     $ lein plugin install org.clojars.ibdknox/lein-nailgun 1.1.1
+"     $ hg clone https://bitbucket.org/kotarak/vimclojure
+"     # get into the client directory and make it
+"     $ mv ng ~/.bin/ng  # or equivalent personal bin
+"     $ lein nailgun     # to start the server
+" For some reason as yet undetermined trying to set the path explicitly with
+" g:vimclojure#NailgunClient doesn't work. Neither did lein-tarsier make lein
+" nailgunning any easier.
+" TODO - Put this information somewhere handier!!!
 if v:version >= 700
+	let g:vimclojure#WantNailgun=1
+	let g:vimclojure#DynamicHighlighting=1
 	let g:vimclojure#ParenRainbow=1
 endif
 

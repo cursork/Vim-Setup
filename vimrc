@@ -56,20 +56,21 @@ set winaltkeys=no
 if has('gui_running')
 	" Hide decorations by default
 	" m = menubar, r = right scrollbar, L = left scrollbar (in vert split),
-	" T = toolbar
+	" T = toolbar, e = plain Vim tabs
 	set guioptions-=m
 	set guioptions-=r
-	set guioptions-=T
 	set guioptions-=L
-	" Use console instead of popup windows
+	set guioptions-=T
+	set guioptions-=e
+	" Use console instead of popup windows for confirmations
 	set guioptions+=c
 
 	" Toggle menubar/toolbar/scrollbar with F11
 	function! ToggleGvimBits()
 		if &go=~#'m'
-			set go-=mrTL
+			set go-=mrTLe
 		else
-			set go+=mrTL
+			set go+=mrTLe
 		endif
 	endfunction
 	nnoremap <F11> :call ToggleGvimBits()<CR>
@@ -219,6 +220,7 @@ vnoremap <F8> <Esc><CR>:let b:nk_old_a_register=@a<CR>gvy:new<CR>pggdd<C-w>p:let
 if has("perl")
 	perl <<EOF
 	use strict;
+	use Encode;
 	use File::Temp ();
 
 	sub current_proc {
@@ -234,6 +236,11 @@ if has("perl")
 				sql  => qr/^\s*create\s+(?:table|procedure)\s+(\S+)\b/i,
 				java => qr{^\s*(?:public|private|protected)\s*(?:static)?\s+\S+\s+(\S+)\s*\(},
 				perl => qr{^\s*sub\s+(\S+)\s*\{},
+				# "function foo {..." and # foo [:=] function (...
+				javascript => qr{
+						(?:^\s*function\s+(\S+)\s*\()|
+						(?:(?:\s|^)(\S+)\s*[=:]\s*function\s*\()
+					}x,
 			}->{$ftype};
 		if (!defined $expression) {
 			VIM::DoCommand "let procName=''";
@@ -241,29 +248,104 @@ if has("perl")
 		}
 
 		my $proc_name = '';
-		for my $i (reverse(1 .. $line_number)) {
+		LINE: for my $i (reverse(1 .. $line_number)) {
 			my $line = $curbuf->Get($i);
-			if ($line =~ $expression) {
-				$proc_name = ": $1";
-				last;
+			if (my @matches = $line =~ $expression) {
+				foreach (@matches) {
+					if ($_) {
+						$proc_name = ": $_";
+						last LINE;
+					}
+				}
 			}
 		}
 		VIM::DoCommand "let procName='$proc_name'";
 	}
 
-	sub new_temp_perl_file {
-		my ($fh, $fname) = File::Temp::tempfile(SUFFIX => '.pl');
-		print $fh "use v5.012;\nuse warnings;\n\n\n";
+	my $file_defs = {
+		'perl' => ['pl', <<'PERL'],
+use v5.012;
+use warnings;
+use utf8;
+
+use Data::Dumper;
+
+
+PERL
+		'xml' => ['xml', "<?xml version='1.0' encoding='utf-8'?>\n\n"],
+	};
+	sub new_temp_file {
+		my ($type) = @_;
+		my ($suffix, $content) = @{$file_defs->{$type}};
+
+		my ($fh, $fname) = File::Temp::tempfile(SUFFIX => '.' . $suffix);
+		print $fh $content;
 		close $fh;
+
 		VIM::DoCommand "edit $fname";
 		VIM::DoCommand "normal G";
 	}
+
+	sub _apply_to_cur_line {
+		my ($func, %opts) = @_;
+
+		my ($line_number) = $main::curwin->Cursor;
+
+		my $cur_line = $main::curbuf->Get($line_number);
+		if ($opts{'encode_decode'}) {
+			$cur_line = Encode::decode('UTF-8', $cur_line);
+		}
+		my $new_line = $func->($cur_line);
+		if ($opts{'encode_decode'}) {
+			$new_line = Encode::encode('UTF-8', $new_line);
+		}
+
+		$main::curbuf->Set($line_number, $new_line);
+	}
+
+	sub decompose {
+		require Unicode::Normalize;
+		_apply_to_cur_line(\&Unicode::Normalize::NFD, encode_decode => 1);
+	}
+
+	sub compose {
+		require Unicode::Normalize;
+		_apply_to_cur_line(\&Unicode::Normalize::NFC, encode_decode => 1);
+	}
+
+	sub fix_double_encoded_utf8 {
+		_apply_to_cur_line(sub {
+			my $line = Encode::decode('UTF-8', $_[0]);
+			my $new  = '';
+			foreach (split qr//, $line) {
+				my $ord = sprintf '\x%x', ord($_);
+				$new .= eval "\"$ord\"";
+			}
+			return $new;
+		});
+	}
 EOF
 
-function! NKTempPerlFile()
-	perl new_temp_perl_file()
-endfunction
-com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
+	function! NKTempPerlFile()
+		perl new_temp_file('perl')
+	endfunction
+	com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
+	function! NKTempXMLFile()
+		perl new_temp_file('xml')
+	endfunction
+	com! -nargs=0 NKTempXMLFile call NKTempXMLFile()
+	function! NKDecompose()
+		perl decompose()
+	endfunction
+	com! -nargs=0 NKDecompose call NKDecompose()
+	function! NKCompose()
+		perl compose()
+	endfunction
+	com! -nargs=0 NKCompose call NKCompose()
+	function! NKFixDoubleUTF8()
+		perl fix_double_encoded_utf8()
+	endfunction
+	com! -nargs=0 NKFixDoubleUTF8 call NKFixDoubleUTF8()
 endif
 function! NKCurrentProc()
 	if has("perl")
@@ -288,7 +370,7 @@ set sidescrolloff=1
 set scrolloff=10     " Keep 10 context lines at top/bottom of screen
 set lazyredraw       " Redraw lazily... (e.g. not during macro invocation)
 set shortmess=aTItoO " Make Vim less wordy (e.g. [RO] instead of readonly...)
-set confirm          " Ask to save edited buffers when quitting (don't error)
+set noconfirm        " Error without asking to save edited buffers when quitting
 " Make Vim really really quiet
 set noerrorbells     " Quiet for most common errors...
 set visualbell       " ...catch odd cases (esc in normal mode) with vbells...
@@ -317,17 +399,6 @@ set laststatus=2
 
 " Default history of 20 lines is not so good
 set history=10000
-
-" Allow manual hard wrapping with gq at 79 chars, formatoptions - t stops it
-" autowrapping. Colorcolumn adds a nice line to the right hand side.
-set textwidth=79
-set formatoptions-=t
-if exists('+colorcolumn')
-	set colorcolumn=+1
-endif
-" When joining sentence lines with 'J' (lines ending with '.'/'?'/'!'), use one
-" space instead of two.
-set nojoinspaces
 
 " Don't softwrap by default... But if we do turn it on, we will indicate
 " softwraps with a curled arrow or a tilde - done in >=7.2 stuff below.
@@ -546,6 +617,17 @@ function! NKDocumentRead()
 endfunction
 nnoremap <F3> :call NKDocumentRead()<CR>
 
+" Allow manual hard wrapping with gq at 79 chars, formatoptions - t stops it
+" autowrapping. Colorcolumn adds a nice line to the right hand side.
+set textwidth=79
+set formatoptions-=t
+if exists('+colorcolumn')
+	set colorcolumn=+1
+endif
+" When joining sentence lines with 'J' (lines ending with '.'/'?'/'!'), use one
+" space instead of two.
+set nojoinspaces
+
 " Reformat line
 nnoremap <F4> :execute 'normal gww'<CR>
 inoremap <F4> <Esc>:execute 'normal gww'<CR>a
@@ -554,6 +636,12 @@ nnoremap <S-F4> :execute 'normal gwap'<CR>
 inoremap <S-F4> <Esc>:execute 'normal gwap'<CR>a
 " Reformat selection
 vnoremap <F4> gw
+
+" Join all paragraphs / selected text
+function! NKJoinParagraphs()
+	'<,'>s/.\zs\n\ze./ /
+endfunction
+vnoremap <S-F4> <Esc>:call NKJoinParagraphs()<CR>
 
 " Toggle automatic formatting of text files
 function! NKToggleFormatting()
@@ -574,7 +662,7 @@ nnoremap <M-F5> :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>
 nnoremap <M-F6> :setlocal expandtab!<CR>:setlocal expandtab?<CR>
 nnoremap <F7>   :TagbarToggle<CR>
-nnoremap <M-F7> :NERDTreeToggle<CR>
+nnoremap <M-F7> :NERDTreeTabsToggle<CR>
 
 " Tagbar opens on left, and is much narrower
 let g:tagbar_left=1
@@ -601,16 +689,17 @@ cnoremap <F1> <C-[>
 
 " Show what F-keys do
 function! NKKeys()
-	echo " F3  - Map insert/delete to scroll   |"
-	echo " F4  - Wrap line | S-F4 - paragraph  | M-F4   - Toggle formatting"
-	echo " F5  - Toggle case-sensitive search  |"
-	echo " F6  - Toggle paste                  | M-F6   - Toggle expand tabs"
-	echo " F7  - Toggle Tagbar                 | M-F7   - Toggle NERD Tree"
-	echo " F8  - (Normal/Insert) Spell-check   | (Visual) - Open selection in new window"
-	echo " F9  - Highlight search terms        |"
-	echo " F10 - Line numbers                  |"
-	echo " F11 - Sync syntax                   |"
-	echo " F12 - Most recently used files      |"
+	echo " F3   - Map insert/delete to scroll   |"
+	echo " F4   - Wrap line                     | M-F4     - Toggle formatting"
+	echo " S-F4 - Wrap paragraph                | (Visual) - Join paragraphs"
+	echo " F5   - Toggle case-sensitive search  |"
+	echo " F6   - Toggle paste                  | M-F6     - Toggle expand tabs"
+	echo " F7   - Toggle Tagbar                 | M-F7     - Toggle NERD Tree"
+	echo " F8   - (Normal/Insert) Spell-check   | (Visual) - Open selection in new window"
+	echo " F9   - Highlight search terms        |"
+	echo " F10  - Line numbers                  |"
+	echo " F11  - Sync syntax                   |"
+	echo " F12  - Most recently used files      |"
 endfunction
 com! -nargs=0 NKKeys call NKKeys()
 nnoremap <F2> :call NKKeys()<CR>

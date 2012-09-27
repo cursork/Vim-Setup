@@ -32,4 +32,7 @@ git clone https://github.com/jistr/vim-nerdtree-tabs.git
 echo Cloning VimClojure...
 git clone https://github.com/vim-scripts/VimClojure.git
 
+echo Cloning zoom.vim
+git clone https://github.com/vim-scripts/zoom.vim.git
+
 echo Done.

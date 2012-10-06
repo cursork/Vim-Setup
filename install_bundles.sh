@@ -32,4 +32,10 @@ git clone https://github.com/jistr/vim-nerdtree-tabs.git
 echo Cloning VimClojure...
 git clone https://github.com/vim-scripts/VimClojure.git
 
+echo Cloning Vim Erlang...
+git clone https://github.com/oscarh/vimerl.git
+
+echo Cloning Perl Omni...
+git clone https://github.com/c9s/perlomni.vim.git
+
 echo Done.

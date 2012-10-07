@@ -1,0 +1,48 @@
+# From here: https://github.com/kbj/vim-snipmate-erlang
+# But just the basics - there's loads of snippets for creating whole files,
+# which I don't really like
+
+# -module()
+snippet mod
+	-module(`Filename()`).
+
+# -include()
+snippet inc lib
+	-include_lib("${1:app}/include/${2:$1}.hrl").${3}
+snippet inc ?MODULE.hrl
+	-include("${1:`Filename("$1.hrl")`}").${3}
+
+# -export()
+snippet exp
+	-export([${1:exports}]).${2}
+
+# vsn
+snippet vsn
+	-vsn(${1:version})
+
+# -import()
+snippet imp general
+	-import(${1:module}, [${2:func}/${3:arity}]).${4}
+snippet imp lists
+	-import(lists, [flatten/1, member/2, sort/1, map/2, foldl/3, foreach/2, reverse/1]).
+
+# -define()
+snippet def
+	-define(${1:macro}, ${2:replace}).${3}
+
+# -record()
+snippet rec
+	-record(${1:name}, {
+		${2:field} :: ${3:type},
+		${4:field} :: ${5:type}
+	}).
+
+# Use eunit so often
+snippet eunit
+	-include_lib("eunit/include/eunit.hrl").
+
+# eunit test
+snippet test
+	${1:func}_${2:cond}_test() ->
+		?assert${3}(${4}, ${5}).
+	${6}

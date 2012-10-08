@@ -41,4 +41,7 @@ git clone https://github.com/oscarh/vimerl.git
 echo Cloning Perl Omni...
 git clone https://github.com/c9s/perlomni.vim.git
 
+echo Cloning Gundo...
+git clone http://github.com/sjl/gundo.vim.git
+
 echo Done.

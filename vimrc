@@ -123,6 +123,11 @@ if exists('+undofile')
 	endif
 endif
 
+" Show undo diff preview below main window and close when reverting
+let g:gundo_preview_bottom=1
+let g:gundo_close_on_revert=1
+let g:gundo_help=0
+
 " Write backup files to another directory - don't pollute current directory
 " with rubbish
 set backup

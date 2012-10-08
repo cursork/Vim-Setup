@@ -235,7 +235,7 @@ if has("perl")
 				tcl  => qr/^\s*proc\s+(\S+)\s/,
 				sql  => qr/^\s*create\s+(?:table|procedure)\s+(\S+)\b/i,
 				java => qr{^\s*(?:public|private|protected)\s*(?:static)?\s+\S+\s+(\S+)\s*\(},
-				perl => qr{^\s*sub\s+(\S+)\s*\{},
+				perl => qr{^\s*sub\s+(\S+).*\{},
 				# "function foo {..." and # foo [:=] function (...
 				javascript => qr{
 						(?:^\s*function\s+(\S+)\s*\()|
@@ -705,7 +705,7 @@ cnoremap <F1> <C-[>
 
 " Show what F-keys do
 function! NKKeys()
-	echo " F3   - Map insert/delete to scroll   |"
+	echo " F3   - Toggle \"true\" read-only mode  |"
 	echo " F4   - Wrap line                     | M-F4     - Toggle formatting"
 	echo " S-F4 - Wrap paragraph                | (Visual) - Join paragraphs"
 	echo " F5   - Toggle case-sensitive search  |"
@@ -714,7 +714,7 @@ function! NKKeys()
 	echo " F8   - (Normal/Insert) Spell-check   | (Visual) - Open selection in new window"
 	echo " F9   - Highlight search terms        |"
 	echo " F10  - Line numbers                  |"
-	echo " F11  - Sync syntax                   |"
+	echo " F11  - Toggle gVim decorations       |"
 	echo " F12  - Most recently used files      |"
 endfunction
 com! -nargs=0 NKKeys call NKKeys()

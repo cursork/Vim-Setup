@@ -1,5 +1,7 @@
-" Spell-check comments
-syn match perlComment "#.*" contains=perlTodo,@Spell
+" Spell-check comments and ignore $#_ type array counts
+syntax clear perlComment
+syntax match perlComment "^#.*" contains=perlTodo,@Spell
+syntax match perlComment "[^\$]#.*" contains=perlTodo,@Spell
 
 unlet b:current_syntax
 syntax include @SQL syntax/sql.vim
@@ -14,3 +16,6 @@ syntax include @HTML syntax/html.vim
 syntax region htmlSnip matchgroup=Snip start=:<<\(['"]\?\)HTML\1\s*;\s*$: end=:^\s*HTML$: contains=@HTML
 
 hi link Snip SpecialComment
+
+" Prevent it being set to 'toplevel' and spell-checking 'Normal' text
+syntax spell default

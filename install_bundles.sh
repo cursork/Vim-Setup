@@ -44,4 +44,7 @@ git clone https://github.com/c9s/perlomni.vim.git
 echo Cloning Gundo...
 git clone http://github.com/sjl/gundo.vim.git
 
+echo Cloning Rooter...
+git clone https://github.com/airblade/vim-rooter.git
+
 echo Done.

@@ -244,7 +244,7 @@ if has("perl")
 				# "function foo {..." and # foo [:=] function (...
 				javascript => qr{
 						(?:^\s*function\s+(\S+)\s*\()|
-						(?:(?:\s|^)(\S+)\s*[=:]\s*function\s*\()
+						(?:(?:\s|^)([A-z]+)\s*[=:]\s*function\s*\()
 					}x,
 			}->{$ftype};
 		if (!defined $expression) {
@@ -407,11 +407,12 @@ if !exists('*SyntasticStatuslineFlag')
 		return ''
 	endfunction
 endif
-" HTML with {{templates}} is error-rific
+" HTML with {{templates}} is error-rific, but everything else can and should be
+" actively syntax-checked.
 if v:version >= 700
 	let g:syntastic_mode_map = {}
 	let g:syntastic_mode_map['mode'] = 'active'
-	let g:syntastic_mode_map['passive_filetypes'] = ['html', 'xml']
+	let g:syntastic_mode_map['passive_filetypes'] = ['html']
 endif
 
 " Status line is filename[RO] [filetype] : line, column current-proc <gap> char/hex char syntastic-error
@@ -499,7 +500,8 @@ let g:omni_sql_no_default_maps=1
 " Default to MySQL filetype
 let g:sql_type_default='mysql'
 " VCS plugin should default to vertical splits
-let VCSCommandSplit='vertical'
+let g:VCSCommandSplit='vertical'
+let g:VCSCommandDisableMappings=1
 "
 " Clojure Magic - rainbow parens, highlighting :used bits, nailgun evaluation
 " of clojure files / help / etc.

@@ -47,4 +47,7 @@ git clone http://github.com/sjl/gundo.vim.git
 echo Cloning Rooter...
 git clone https://github.com/airblade/vim-rooter.git
 
+echo Cloning Unicode Completion...
+git clone https://github.com/chrisbra/unicode.vim.git
+
 echo Done.

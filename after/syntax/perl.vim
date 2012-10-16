@@ -2,6 +2,16 @@
 syntax clear perlComment
 syntax match perlComment "^#.*" contains=perlTodo,@Spell
 syntax match perlComment "[^\$]#.*" contains=perlTodo,@Spell
+" Above is wiping out sensible highlighting on 'm# ... #', etc. and I should
+" resolve it in a better way but never mind - this is just copied from the
+" normal syntax/perl.vim:
+syn region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!m#+          end=+#[cgimopsx]*+ contains=@perlInterpMatch keepend
+syn region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!s#+          end=+#+me=e-1      contains=@perlInterpMatch nextgroup=perlSubstitutionGQQ keepend
+syn region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!\%(tr\|y\)#+ end=+#+me=e-1      contains=@perlInterpSQ    nextgroup=perlTranslationGQ
+syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!q#+          end=+#+            contains=@perlInterpSQ    keepend
+syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!q[qx]#+      end=+#+            contains=@perlInterpDQ    keepend
+syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qw#+         end=+#+            contains=@perlInterpSQ    keepend
+syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qr#+         end=+#[imosx]*+    contains=@perlInterpMatch keepend
 
 unlet b:current_syntax
 syntax include @SQL syntax/sql.vim

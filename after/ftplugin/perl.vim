@@ -11,3 +11,4 @@ setlocal complete-=i
 " Use perldoc when 'K' is used to lookup a keyword
 set keywordprg=perldoc
 
+nnoremap <Leader>ef :call NKRunPerlInNewWindow()<CR>

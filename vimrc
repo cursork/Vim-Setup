@@ -83,9 +83,15 @@ if has('gui_running')
 		" Lion full-screen mode - don't maximise horizontally
 		set fuoptions-=maxhorz
 	elseif (has('win32') || has('win64'))
-		" Consolas is nice, but has bad character support. Courier New has
-		" better, but is really not pretty, especially at smaller text sizes
-		set guifont=Consolas:h8
+		" Consolas is great, but has bad character support. DejaVu Sans Mono is
+		" better, so use it when we can.
+		" We do this silent-if dance so that zoom.vim works correctly -
+		" normally we could simply use comma-separated fonts.
+		" TODO push a fix back to zoom.vim
+		silent! set guifont=DejaVu\ Sans\ Mono:h8
+		if &guifont != 'DejaVu Sans Mono:h8'
+			set guifont=Consolas:h8
+		endif
 		" MingLi is horrid for A-z, but has good character support
 		" so use it for double-width characters
 		set guifontwide=MingLiU
@@ -143,7 +149,6 @@ endif
 " Most Recently Used plugin stores recent files separate from command history
 if v:version >= 700
 	let MRU_Max_Entries        = 1000
-	let MRU_Exclude_Files      = "\\Temp\\|/tmp/"
 	let MRU_Window_Height      = 5
 	let MRU_Use_Current_Window = 0
 	let MRU_Auto_Close         = 1
@@ -373,6 +378,12 @@ function! NKCurrentProc()
 		perl current_proc()
 		return procName
 	endif
+endfunction
+
+" Perl after file will set this to <Leader>ef (execute file)
+function! NKRunPerlInNewWindow()
+	rightbelow new __Scratch__
+	execute "r!perl #"
 endfunction
 
 " 'LABEL:' shunting to the left is really not useful in most places. If I end
@@ -703,6 +714,8 @@ com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
 " Square and cube superscripts
 digraphs ^2 178
 digraphs ^3 179
+" Unicode completion plugin can show me the digraph for arbitrary characters
+let g:showDigraphCode=1
 
 " Some keyboards make it too easy to hit F1 when one means escape
 noremap  <F1> <C-[>

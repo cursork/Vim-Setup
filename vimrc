@@ -382,8 +382,19 @@ endfunction
 
 " Perl after file will set this to <Leader>ef (execute file)
 function! NKRunPerlInNewWindow()
-	rightbelow new __Scratch__
-	execute "r!perl #"
+	" Must write first!
+	write
+	" Remove the last one, create a new output window and configure it to
+	" remove itself as soon as possible, with no warnings.
+	silent! bdelete __PerlOutput__
+	rightbelow new __PerlOutput__
+	setlocal buftype=nofile
+	setlocal bufhidden=delete
+	setlocal noswapfile
+	" Run the last buffer through perl and paste the output at the top, before
+	" going back to the above window.
+	execute "0r!perl #"
+	wincmd k
 endfunction
 
 " 'LABEL:' shunting to the left is really not useful in most places. If I end
@@ -743,5 +754,8 @@ nnoremap <F2> :call NKKeys()<CR>
 " Set a variable so some things aren't repeated on further sourcing of .vimrc
 " e.g. only resize the Window on launch of Vim
 let s:vimrc_loaded_before = 1
+
+" Load any machine specific customisations if they exist
+runtime machine_specific.vim
 
 " Fin

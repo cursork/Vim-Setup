@@ -11,3 +11,6 @@ setlocal complete-=i
 " Use perldoc when 'K' is used to lookup a keyword
 set keywordprg=perldoc
 
+" This is defined in .vimrc. N.B. there will be issues if you edit Clojure and
+" Perl in the same session (unlikely I hope); they both use this mapping.
+nnoremap <Leader>ef :call NKRunPerlInNewWindow()<CR>

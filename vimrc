@@ -79,7 +79,7 @@ if has('gui_running')
 
 	if has('gui_macvim')
 		" Nice and decent Unicode support
-		set guifont=Menlo
+		set guifont=Menlo:h11
 		" Lion full-screen mode - don't maximise horizontally
 		set fuoptions-=maxhorz
 	elseif (has('win32') || has('win64'))

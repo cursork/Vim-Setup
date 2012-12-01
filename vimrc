@@ -226,13 +226,15 @@ endif
 " Open selection in new buffer (TODO function-ise)
 vnoremap <F8> <Esc><CR>:let b:nk_old_a_register=@a<CR>gvy:new<CR>pggdd<C-w>p:let @a=b:nk_old_a_register<CR><C-w>p:let &filetype=input('Filetype? ')<CR>
 
-" Use perl to find the current proc.
 if has("perl")
 	perl <<EOF
 	use strict;
 	use Encode;
 	use File::Temp ();
+	use IO::Socket::INET;
+	use Time::HiRes 'usleep';
 
+	# Use perl to find the current proc.
 	sub current_proc {
 		my $curwin = $main::curwin;
 		my $curbuf = $main::curbuf;
@@ -246,7 +248,7 @@ if has("perl")
 				sql  => qr/^\s*create\s+(?:table|procedure)\s+(\S+)\b/i,
 				java => qr{^\s*(?:public|private|protected)\s*(?:static)?\s+\S+\s+(\S+)\s*\(},
 				perl => qr{^\s*sub\s+(\S+).*\{},
-				# "function foo {..." and # foo [:=] function (...
+				# "function foo {..." and # foo [:=] function (... )...
 				javascript => qr{
 						(?:^\s*function\s+(\S+)\s*\()|
 						(?:(?:\s|^)([A-z]+)\s*[=:]\s*function\s*\()
@@ -346,6 +348,20 @@ HTML
 			return $new;
 		});
 	}
+
+	# Send whatever is selected to the socket (I use it to send things to iTerm
+	# running a REPL)
+	sub send_to_socket {
+		my ($start, $end) = @_;
+		my $sock = IO::Socket::INET->new(PeerAddr => 'localhost', PeerPort => 10001);
+		foreach ($main::curbuf->Get($start .. $end)) {
+			$sock->print($_ . "\n");
+			# Seen issues blindly pumping data into a REPL (defining things
+			# when the dependencies aren't there yet, etc.)
+			# So slow it down: 1/100th of a second seems a good compromise
+			usleep 10_000;
+		}
+	}
 EOF
 
 	function! NKTempPerlFile()
@@ -372,6 +388,12 @@ EOF
 		perl fix_double_encoded_utf8()
 	endfunction
 	com! -nargs=0 NKFixDoubleUTF8 call NKFixDoubleUTF8()
+	function! NKSendToSocket(start, end)
+		execute 'perl send_to_socket(' . a:start . ', ' . a:end . ')'
+	endfunction
+	com! -nargs=0 -range NKSendToSocket call NKSendToSocket(<line1>, <line2>)
+	nmap <Leader>ee :NKSendToSocket<CR>:echo 'Sent'<CR>
+	vmap <Leader>ee :NKSendToSocket<CR>:echo 'Sent'<CR>
 endif
 function! NKCurrentProc()
 	if has("perl")
@@ -733,6 +755,9 @@ noremap  <F1> <C-[>
 vnoremap <F1> <C-[>
 lnoremap <F1> <C-[>
 cnoremap <F1> <C-[>
+
+" And some keyboard mappings give me a broken pipe!
+inoremap ¦ \|
 
 " Show what F-keys do
 function! NKKeys()

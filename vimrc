@@ -277,14 +277,16 @@ if has("perl")
 	my $file_defs = {
 		'perl' => ['pl', <<'PERL'],
 use v5.012;
-use warnings;
+use warnings FATAL => 'all';
 use utf8;
+use encoding 'UTF-8';
+use autodie  ':all';
 
 use Data::Dumper;
 
 
 PERL
-		'xml' => ['xml', "<?xml version='1.0' encoding='utf-8'?>\n\n"],
+		'xml' => ['xml', ""],
 		'html' => ['html', <<'HTML'],
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -364,18 +366,18 @@ HTML
 	}
 EOF
 
-	function! NKTempPerlFile()
+	function! NKTPerlFile()
 		perl new_temp_file('perl')
 	endfunction
-	com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
-	function! NKTempHTMLFile()
+	com! -nargs=0 NKTPerlFile call NKTPerlFile()
+	function! NKTHTMLFile()
 		perl new_temp_file('html')
 	endfunction
-	com! -nargs=0 NKTempHTMLFile call NKTempHTMLFile()
-	function! NKTempXMLFile()
+	com! -nargs=0 NKTHTMLFile call NKTHTMLFile()
+	function! NKTXMLFile()
 		perl new_temp_file('xml')
 	endfunction
-	com! -nargs=0 NKTempXMLFile call NKTempXMLFile()
+	com! -nargs=0 NKTXMLFile call NKTXMLFile()
 	function! NKDecompose()
 		perl decompose()
 	endfunction

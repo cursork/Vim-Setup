@@ -50,4 +50,13 @@ git clone https://github.com/airblade/vim-rooter.git
 echo Cloning Unicode Completion...
 git clone https://github.com/chrisbra/unicode.vim.git
 
+echo Cloning F# Runtime...
+git clone https://github.com/kongo2002/fsharp-vim.git
+
+echo Cloning Indent Text Objects...
+git clone https://github.com/michaeljsmith/vim-indent-object.git
+
+echo Cloning Column Text Objects...
+git clone https://github.com/coderifous/textobj-word-column.vim.git
+
 echo Done.

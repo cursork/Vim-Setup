@@ -79,7 +79,7 @@ if has('gui_running')
 
 	if has('gui_macvim')
 		" Nice and decent Unicode support
-		set guifont=Menlo
+		set guifont=Menlo:h11
 		" Lion full-screen mode - don't maximise horizontally
 		set fuoptions-=maxhorz
 	elseif (has('win32') || has('win64'))
@@ -226,13 +226,15 @@ endif
 " Open selection in new buffer (TODO function-ise)
 vnoremap <F8> <Esc><CR>:let b:nk_old_a_register=@a<CR>gvy:new<CR>pggdd<C-w>p:let @a=b:nk_old_a_register<CR><C-w>p:let &filetype=input('Filetype? ')<CR>
 
-" Use perl to find the current proc.
 if has("perl")
 	perl <<EOF
 	use strict;
 	use Encode;
 	use File::Temp ();
+	use IO::Socket::INET;
+	use Time::HiRes 'usleep';
 
+	# Use perl to find the current proc.
 	sub current_proc {
 		my $curwin = $main::curwin;
 		my $curbuf = $main::curbuf;
@@ -246,7 +248,7 @@ if has("perl")
 				sql  => qr/^\s*create\s+(?:table|procedure)\s+(\S+)\b/i,
 				java => qr{^\s*(?:public|private|protected)\s*(?:static)?\s+\S+\s+(\S+)\s*\(},
 				perl => qr{^\s*sub\s+(\S+).*\{},
-				# "function foo {..." and # foo [:=] function (...
+				# "function foo {..." and # foo [:=] function (... )...
 				javascript => qr{
 						(?:^\s*function\s+(\S+)\s*\()|
 						(?:(?:\s|^)([A-z]+)\s*[=:]\s*function\s*\()
@@ -275,14 +277,16 @@ if has("perl")
 	my $file_defs = {
 		'perl' => ['pl', <<'PERL'],
 use v5.012;
-use warnings;
+use warnings FATAL => 'all';
 use utf8;
+use encoding 'UTF-8';
+use autodie  ':all';
 
 use Data::Dumper;
 
 
 PERL
-		'xml' => ['xml', "<?xml version='1.0' encoding='utf-8'?>\n\n"],
+		'xml' => ['xml', ""],
 		'html' => ['html', <<'HTML'],
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -346,20 +350,34 @@ HTML
 			return $new;
 		});
 	}
+
+	# Send whatever is selected to the socket (I use it to send things to iTerm
+	# running a REPL)
+	sub send_to_socket {
+		my ($start, $end) = @_;
+		my $sock = IO::Socket::INET->new(PeerAddr => 'localhost', PeerPort => 10001);
+		foreach ($main::curbuf->Get($start .. $end)) {
+			$sock->print($_ . "\n");
+			# Seen issues blindly pumping data into a REPL (defining things
+			# when the dependencies aren't there yet, etc.)
+			# So slow it down: 1/100th of a second seems a good compromise
+			usleep 10_000;
+		}
+	}
 EOF
 
-	function! NKTempPerlFile()
+	function! NKTPerlFile()
 		perl new_temp_file('perl')
 	endfunction
-	com! -nargs=0 NKTempPerlFile call NKTempPerlFile()
-	function! NKTempHTMLFile()
+	com! -nargs=0 NKTPerlFile call NKTPerlFile()
+	function! NKTHTMLFile()
 		perl new_temp_file('html')
 	endfunction
-	com! -nargs=0 NKTempHTMLFile call NKTempHTMLFile()
-	function! NKTempXMLFile()
+	com! -nargs=0 NKTHTMLFile call NKTHTMLFile()
+	function! NKTXMLFile()
 		perl new_temp_file('xml')
 	endfunction
-	com! -nargs=0 NKTempXMLFile call NKTempXMLFile()
+	com! -nargs=0 NKTXMLFile call NKTXMLFile()
 	function! NKDecompose()
 		perl decompose()
 	endfunction
@@ -372,6 +390,12 @@ EOF
 		perl fix_double_encoded_utf8()
 	endfunction
 	com! -nargs=0 NKFixDoubleUTF8 call NKFixDoubleUTF8()
+	function! NKSendToSocket(start, end)
+		execute 'perl send_to_socket(' . a:start . ', ' . a:end . ')'
+	endfunction
+	com! -nargs=0 -range NKSendToSocket call NKSendToSocket(<line1>, <line2>)
+	nmap <Leader>ee :NKSendToSocket<CR>:echo 'Sent'<CR>
+	vmap <Leader>ee :NKSendToSocket<CR>:echo 'Sent'<CR>
 endif
 function! NKCurrentProc()
 	if has("perl")
@@ -382,8 +406,19 @@ endfunction
 
 " Perl after file will set this to <Leader>ef (execute file)
 function! NKRunPerlInNewWindow()
-	rightbelow new __Scratch__
-	execute "r!perl #"
+	" Must write first!
+	write
+	" Remove the last one, create a new output window and configure it to
+	" remove itself as soon as possible, with no warnings.
+	silent! bdelete __PerlOutput__
+	rightbelow new __PerlOutput__
+	setlocal buftype=nofile
+	setlocal bufhidden=delete
+	setlocal noswapfile
+	" Run the last buffer through perl and paste the output at the top, before
+	" going back to the above window.
+	execute "0r!perl #"
+	wincmd k
 endfunction
 
 " 'LABEL:' shunting to the left is really not useful in most places. If I end
@@ -722,6 +757,9 @@ noremap  <F1> <C-[>
 vnoremap <F1> <C-[>
 lnoremap <F1> <C-[>
 cnoremap <F1> <C-[>
+
+" And some keyboard mappings give me a broken pipe!
+inoremap ¦ \|
 
 " Show what F-keys do
 function! NKKeys()

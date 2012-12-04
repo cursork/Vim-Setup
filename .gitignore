@@ -9,3 +9,4 @@ undo
 mru_files
 LICENSE.txt
 bundle/*
+machine_specific.vim

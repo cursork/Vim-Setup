@@ -744,4 +744,7 @@ nnoremap <F2> :call NKKeys()<CR>
 " e.g. only resize the Window on launch of Vim
 let s:vimrc_loaded_before = 1
 
+" Load any machine specific customisations if they exist
+runtime machine_specific.vim
+
 " Fin

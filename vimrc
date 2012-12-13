@@ -598,14 +598,19 @@ nnoremap <Tab> <C-w><C-w>
 " No line numbers -> line numbers -> relative line numbers
 "       ^---------------------------------------ˇ
 function! NKLineNumberSwitch()
-	if &relativenumber
-		set norelativenumber
-		set number?
-	elseif &number
-		set relativenumber
-		set relativenumber?
+	if exists('&relativenumber')
+		if &relativenumber
+			set norelativenumber
+			set number?
+		elseif &number
+			set relativenumber
+			set relativenumber?
+		else
+			set number
+			set number?
+		endif
 	else
-		set number
+		set number!
 		set number?
 	endif
 endfunction

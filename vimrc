@@ -447,12 +447,6 @@ if has('autocmd')
 	autocmd GUIEnter * set visualbell t_vb=
 endif
 
-" Dummy this function if it doesn't exist, as it is used by the status line
-if !exists('*SyntasticStatuslineFlag')
-	function SyntasticStatuslineFlag()
-		return ''
-	endfunction
-endif
 " HTML with {{templates}} is error-rific, but everything else can and should be
 " actively syntax-checked.
 if v:version >= 700
@@ -461,8 +455,8 @@ if v:version >= 700
 	let g:syntastic_mode_map['passive_filetypes'] = ['html']
 endif
 
-" Status line is filename[RO] [filetype] : line, column current-proc <gap> char/hex char syntastic-error
-set statusline=\ %t%r%m\ %y\ :\ %-4.l,\ %-3.c\ %{NKCurrentProc()}\ %=%b/0x%B\ %{SyntasticStatuslineFlag()}
+" Status line is filename[RO] [filetype] [git info]: line, column current-proc <gap> char/hex char syntastic-error
+set statusline=\ %t%r%m\ %y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}:\ %-4.l,\ %-3.c\ %{NKCurrentProc()}\ %=%b/0x%B\ %{exists('g:loaded_syntastic_plugin')?SyntasticStatuslineFlag():''}
 set laststatus=2
 
 " Default history of 20 lines is not so good

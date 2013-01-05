@@ -62,4 +62,7 @@ git clone https://github.com/coderifous/textobj-word-column.vim.git
 echo Cloning Fugitive \(Git\)...
 git clone https://github.com/tpope/vim-fugitive.git
 
+echo Cloning Ack...
+git clone https://github.com/mileszs/ack.vim.git
+
 echo Done.

@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env sh
 
 if [ -d bundle ]; then
 	cd bundle
@@ -9,7 +9,7 @@ else
 fi
 
 
-for bundle in `/usr/bin/ls`; do
+for bundle in `ls`; do
 	echo Updating $bundle...
 	cd $bundle
 	if [ -d .git ]; then

@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env sh
 
 cd bundle
 if [[ $? -eq 1 ]]; then
@@ -58,5 +58,8 @@ git clone https://github.com/michaeljsmith/vim-indent-object.git
 
 echo Cloning Column Text Objects...
 git clone https://github.com/coderifous/textobj-word-column.vim.git
+
+echo Cloning Fugitive \(Git\)...
+git clone https://github.com/tpope/vim-fugitive.git
 
 echo Done.

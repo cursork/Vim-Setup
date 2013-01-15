@@ -13,6 +13,9 @@ syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!q[
 syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qw#+         end=+#+            contains=@perlInterpSQ    keepend
 syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qr#+         end=+#[imosx]*+    contains=@perlInterpMatch keepend
 
+" Add state to keywords
+syn keyword perlStatementStorage my local our state
+
 unlet b:current_syntax
 syntax include @SQL syntax/sql.vim
 syntax region sqlSnip matchgroup=Snip start=:<<\(['"]\?\)SQL\1\s*;\s*$: end=:^\s*SQL$: contains=@SQL

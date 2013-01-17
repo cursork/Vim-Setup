@@ -556,7 +556,7 @@ let g:VCSCommandDisableMappings=1
 " nailgunning any easier.
 " TODO - Put this information somewhere handier!!!
 if v:version >= 700
-	let g:vimclojure#WantNailgun=1
+	let g:vimclojure#WantNailgun=0
 	let g:vimclojure#DynamicHighlighting=1
 	let g:vimclojure#ParenRainbow=1
 endif
@@ -729,8 +729,8 @@ nnoremap <F5>   :setlocal wrap!<CR>:setlocal wrap?<CR>
 nnoremap <M-F5> :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>
 nnoremap <M-F6> :setlocal expandtab!<CR>:setlocal expandtab?<CR>
-nnoremap <F7>   :TagbarToggle<CR>
-nnoremap <M-F7> :NERDTreeTabsToggle<CR>
+nnoremap <M-F7> :TagbarToggle<CR>
+nnoremap <F7>   :NERDTreeTabsToggle<CR>
 
 " Tagbar opens on left, and is much narrower
 let g:tagbar_left=1

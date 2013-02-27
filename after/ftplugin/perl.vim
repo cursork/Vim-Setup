@@ -9,7 +9,17 @@ setlocal iskeyword+=_,$,@,%,#,:
 setlocal complete-=i
 
 " Use perldoc when 'K' is used to lookup a keyword
-set keywordprg=perldoc
+setlocal keywordprg=perldoc
+
+" Change to root directory
+silent! Rooter
+" Enable 'gf'
+setlocal path+=lib/**
+setlocal suffixesadd=.pm,.pl
+setlocal includeexpr=substitute(v:fname,'::','/','g')
+" Without this you have to put the cursor inside the last word in Package::Name
+" I don't *think* it will have much chance of a deleterious effect
+setlocal isfname+=:
 
 " This is defined in .vimrc. N.B. there will be issues if you edit Clojure and
 " Perl in the same session (unlikely I hope); they both use this mapping.

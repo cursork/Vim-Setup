@@ -65,4 +65,7 @@ git clone https://github.com/tpope/vim-fugitive.git
 echo Cloning Ack...
 git clone https://github.com/mileszs/ack.vim.git
 
+echo Cloning Git Gutter...
+git clone git://github.com/airblade/vim-gitgutter.git
+
 echo Done.

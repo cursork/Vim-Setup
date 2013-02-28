@@ -587,6 +587,8 @@ nnoremap :BD :bd
 nnoremap :E  :e
 " Tab goes through windows in normal mode
 nnoremap <Tab> <C-w><C-w>
+" Hopefully this won't upset me using 'gv' too much
+nnoremap gvf :vertical wincmd f<CR>
 
 " Show/hide line numbers or relative numbers.
 " No line numbers -> line numbers -> relative line numbers

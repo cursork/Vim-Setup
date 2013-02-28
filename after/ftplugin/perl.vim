@@ -9,7 +9,12 @@ setlocal iskeyword+=_,$,@,%,#,:
 setlocal complete-=i
 
 " Use perldoc when 'K' is used to lookup a keyword
-set keywordprg=perldoc
+setlocal keywordprg=perldoc
+
+" Generally I want to be based in the root of a project and look in 'lib' for
+" files to 'gf' to
+silent! execute 'Rooter'
+setlocal path+=lib
 
 " This is defined in .vimrc. N.B. there will be issues if you edit Clojure and
 " Perl in the same session (unlikely I hope); they both use this mapping.

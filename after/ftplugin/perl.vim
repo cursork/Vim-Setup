@@ -19,3 +19,8 @@ setlocal path+=lib
 " This is defined in .vimrc. N.B. there will be issues if you edit Clojure and
 " Perl in the same session (unlikely I hope); they both use this mapping.
 nnoremap <Leader>ef :call NKRunPerlInNewWindow()<CR>
+
+" Allow 'gf' to work
+setlocal suffixesadd=.pm
+setlocal isfname+=:
+setlocal includeexpr=substitute(v:fname,'::','/','g')

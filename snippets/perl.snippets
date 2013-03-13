@@ -1,4 +1,6 @@
-# Define an appropriate d::ump function
+snippet udd
+	use Data::Dumper;
+	
 snippet dd
 	Data::Dumper->Dump([${1}])
 # #!/usr/bin/perl
@@ -9,9 +11,13 @@ snippet #!
 snippet usw
 	use strict;
 	use warnings;
+	
+	
 snippet 512
 	use v5.012;
 	use warnings;
+	
+	
 # Hash Pointer
 snippet .
 	 =>
@@ -101,8 +107,11 @@ snippet slurp
 # POD!
 snippet POD
 	__END__
+
 	=head1 NAME
-		${1}
+
+	${1}
+
 	=head1 SYNOPSIS
 	
 	=head1 DESCRIPTION

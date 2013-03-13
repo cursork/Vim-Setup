@@ -29,8 +29,9 @@ git clone https://github.com/elixir-lang/vim-elixir.git
 echo Cloning NERDTreeTabs
 git clone https://github.com/jistr/vim-nerdtree-tabs.git
 
-echo Cloning VimClojure...
-git clone https://github.com/vim-scripts/VimClojure.git
+# Trialing foreplay and generic rainbows - see below
+# echo Cloning VimClojure...
+# git clone https://github.com/vim-scripts/VimClojure.git
 
 echo Cloning zoom.vim...
 git clone https://github.com/vim-scripts/zoom.vim.git
@@ -67,5 +68,13 @@ git clone https://github.com/mileszs/ack.vim.git
 
 echo Cloning Git Gutter...
 git clone git://github.com/airblade/vim-gitgutter.git
+
+echo Cloning foreplay \(Clojure\)...
+git clone git://github.com/tpope/vim-foreplay.git
+git clone git://github.com/tpope/vim-classpath.git
+git clone git://github.com/guns/vim-clojure-static.git
+
+echo Cloning Rainbow Parentheses...
+git clone git@github.com:kien/rainbow_parentheses.vim.git
 
 echo Done.

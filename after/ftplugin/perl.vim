@@ -11,10 +11,10 @@ setlocal complete-=i
 " Use perldoc when 'K' is used to lookup a keyword
 setlocal keywordprg=perldoc
 
-" Change to root directory
-silent! Rooter
-" Enable 'gf'
-setlocal path+=lib/**
+" Generally I want to be based in the root of a project and look in 'lib' for
+" files to 'gf' to
+silent! execute 'Rooter'
+setlocal path+=lib
 setlocal suffixesadd=.pm,.pl
 setlocal includeexpr=substitute(v:fname,'::','/','g')
 " Without this you have to put the cursor inside the last word in Package::Name
@@ -24,3 +24,8 @@ setlocal isfname+=:
 " This is defined in .vimrc. N.B. there will be issues if you edit Clojure and
 " Perl in the same session (unlikely I hope); they both use this mapping.
 nnoremap <Leader>ef :call NKRunPerlInNewWindow()<CR>
+
+" Allow 'gf' to work
+setlocal suffixesadd=.pm
+setlocal isfname+=:
+setlocal includeexpr=substitute(v:fname,'::','/','g')

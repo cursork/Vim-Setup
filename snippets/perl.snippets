@@ -18,6 +18,20 @@ snippet 512
 	use warnings;
 	
 	
+snippet 516
+	use v5.016;
+	use warnings;
+	
+	
+# Moose boilerplate
+snippet moose
+	use Moose;
+	use namespace::autoclean;
+	
+	
+	
+	__PACKAGE__->meta->make_immutable;
+	
 # Hash Pointer
 snippet .
 	 =>

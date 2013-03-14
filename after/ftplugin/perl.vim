@@ -15,6 +15,7 @@ setlocal keywordprg=perldoc
 " files to 'gf' to
 silent! execute 'Rooter'
 setlocal path+=lib
+let $PERL5LIB='lib'
 
 " This is defined in .vimrc. N.B. there will be issues if you edit Clojure and
 " Perl in the same session (unlikely I hope); they both use this mapping.

@@ -16,6 +16,11 @@ setlocal keywordprg=perldoc
 silent! execute 'Rooter'
 setlocal path+=lib
 let $PERL5LIB='lib'
+setlocal suffixesadd=.pm,.pl
+setlocal includeexpr=substitute(v:fname,'::','/','g')
+" Without this you have to put the cursor inside the last word in Package::Name
+" I don't *think* it will have much chance of a deleterious effect
+setlocal isfname+=:
 
 " This is defined in .vimrc. N.B. there will be issues if you edit Clojure and
 " Perl in the same session (unlikely I hope); they both use this mapping.

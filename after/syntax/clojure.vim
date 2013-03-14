@@ -1,0 +1,5 @@
+silent! RainbowParenthesesToggle
+silent! RainbowParenthesesLoadRound
+silent! RainbowParenthesesLoadSquare
+silent! RainbowParenthesesLoadBraces
+

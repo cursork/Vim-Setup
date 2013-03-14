@@ -34,6 +34,8 @@ if $COLORSCHEME =~'light' || has('gui_running')
 	" colours so red is the background and overrides the cursorline
 	highlight Error gui=standout guifg=#FF0000 guibg=#FFFFFF
 	highlight LineNr gui=italic guibg=#EEEEBB guifg=#000000
+	" SignColumn should be the same as LineNr
+	highlight SignColumn guibg=#EEEEBB
 	" Slightly nicer Visual mode
 	highlight Visual guibg=#CCEEFC
 	" nicotine doesn't highlight identifiers by default

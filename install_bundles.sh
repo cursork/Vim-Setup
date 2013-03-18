@@ -77,4 +77,7 @@ git clone git://github.com/guns/vim-clojure-static.git
 echo Cloning Rainbow Parentheses...
 git clone git@github.com:kien/rainbow_parentheses.vim.git
 
+echo Cloning Cucumber...
+git clone git@github.com:tpope/vim-cucumber.git
+
 echo Done.

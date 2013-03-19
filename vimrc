@@ -458,7 +458,7 @@ if v:version >= 700
 endif
 
 " Status line is filename[RO] [filetype] [git info]: line, column current-proc <gap> char/hex char syntastic-error
-set statusline=\ %t%r%m\ %y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}:\ %-4.l,\ %-3.c\ %{NKCurrentProc()}\ %=0x%B\ %{exists('g:loaded_syntastic_plugin')?SyntasticStatuslineFlag():''}
+set statusline=\ %t%r%m\ %y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}:\ %-4.l,\ %-3.v\ %{NKCurrentProc()}\ %=0x%B\ %{exists('g:loaded_syntastic_plugin')?SyntasticStatuslineFlag():''}
 set laststatus=2
 
 " Default history of 20 lines is not so good

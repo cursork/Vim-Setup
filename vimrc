@@ -458,7 +458,7 @@ if v:version >= 700
 endif
 
 " Status line is filename[RO] [filetype] [git info]: line, column current-proc <gap> char/hex char syntastic-error
-set statusline=\ %t%r%m\ %y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}:\ %-4.l,\ %-3.c\ %{NKCurrentProc()}\ %=0x%B\ %{exists('g:loaded_syntastic_plugin')?SyntasticStatuslineFlag():''}
+set statusline=\ %t%r%m\ %y\ %{exists('g:loaded_fugitive')?fugitive#statusline():''}:\ %-4.l,\ %-3.v\ %{NKCurrentProc()}\ %=0x%B\ %{exists('g:loaded_syntastic_plugin')?SyntasticStatuslineFlag():''}
 set laststatus=2
 
 " Default history of 20 lines is not so good
@@ -700,33 +700,11 @@ endif
 " space instead of two.
 set nojoinspaces
 
-" Reformat line
-nnoremap <F4> :execute 'normal gww'<CR>
-inoremap <F4> <Esc>:execute 'normal gww'<CR>a
-" Reformat paragraph
-nnoremap <S-F4> :execute 'normal gwap'<CR>
-inoremap <S-F4> <Esc>:execute 'normal gwap'<CR>a
-" Reformat selection
-vnoremap <F4> gw
-
 " Join all paragraphs / selected text
 function! NKJoinParagraphs()
 	'<,'>s/.\zs\n\ze./ /
 endfunction
 vnoremap <S-F4> <Esc>:call NKJoinParagraphs()<CR>
-
-" Toggle automatic formatting of text files
-function! NKToggleFormatting()
-	if &formatoptions=~'t'
-		set formatoptions-=t
-	else
-		set formatoptions+=t
-	endif
-	echo 'formatoptions =' &formatoptions
-endfunction
-nnoremap  <M-F4> :call NKToggleFormatting()<CR>
-inoremap  <M-F4> <Esc>:call NKToggleFormatting()<CR>a
-vnoremap  <M-F4> <Esc>:call NKToggleFormatting()<CR>gv
 
 " Useful toggles
 nnoremap <F5>   :setlocal wrap!<CR>:setlocal wrap?<CR>
@@ -767,8 +745,8 @@ inoremap ¦ \|
 " Show what F-keys do
 function! NKKeys()
 	echo " F3   - Toggle \"true\" read-only mode  |"
-	echo " F4   - Wrap line                     | M-F4     - Toggle formatting"
-	echo " S-F4 - Wrap paragraph                | (Visual) - Join paragraphs"
+	echo " F4   -                               |                             "
+	echo " S-F4 -                               | (Visual) - Join paragraphs"
 	echo " F5   - Toggle case-sensitive search  |"
 	echo " F6   - Toggle paste                  | M-F6     - Toggle expand tabs"
 	echo " F7   - Toggle Tagbar                 | M-F7     - Toggle NERD Tree"

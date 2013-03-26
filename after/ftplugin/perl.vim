@@ -15,6 +15,7 @@ setlocal keywordprg=perldoc
 " files to 'gf' to
 silent! execute 'Rooter'
 setlocal path+=lib
+let $PERL5LIB='lib'
 setlocal suffixesadd=.pm,.pl
 setlocal includeexpr=substitute(v:fname,'::','/','g')
 " Without this you have to put the cursor inside the last word in Package::Name

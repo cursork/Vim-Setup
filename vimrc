@@ -403,6 +403,8 @@ function! NKCurrentProc()
 	if has("perl")
 		perl current_proc()
 		return procName
+	else
+		return ''
 	endif
 endfunction
 

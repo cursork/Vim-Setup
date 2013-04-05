@@ -403,6 +403,8 @@ function! NKCurrentProc()
 	if has("perl")
 		perl current_proc()
 		return procName
+	else
+		return ''
 	endif
 endfunction
 
@@ -651,7 +653,7 @@ endif
 " using C-y to scroll the window up.
 " N.B. zencoding can be used for more than HTML. Effectively it also gives us
 " snippets in other languages... See :help zencoding-define-tags-behavior
-let g:user_zen_leader_key = '<C-\>'
+let g:user_zen_leader_key = ','
 
 " A large file is > 50MB. See LargeFile plugin. Undo with :Unlarge
 let g:LargeFile = 50

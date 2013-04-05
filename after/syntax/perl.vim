@@ -5,16 +5,19 @@ syntax match perlComment "[^\$]#.*" contains=perlTodo,@Spell
 " The above is wiping out sensible highlighting on 'm# ... #', etc. and I
 " should resolve it in a better way but never mind - this is just copied from
 " the normal syntax/perl.vim:
-syn region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!m#+          end=+#[cgimopsx]*+ contains=@perlInterpMatch keepend
-syn region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!s#+          end=+#+me=e-1      contains=@perlInterpMatch nextgroup=perlSubstitutionGQQ keepend
-syn region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!\%(tr\|y\)#+ end=+#+me=e-1      contains=@perlInterpSQ    nextgroup=perlTranslationGQ
-syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!q#+          end=+#+            contains=@perlInterpSQ    keepend
-syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!q[qx]#+      end=+#+            contains=@perlInterpDQ    keepend
-syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qw#+         end=+#+            contains=@perlInterpSQ    keepend
-syn region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qr#+         end=+#[imosx]*+    contains=@perlInterpMatch keepend
+syntax region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!m#+          end=+#[cgimopsx]*+ contains=@perlInterpMatch keepend
+syntax region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!s#+          end=+#+me=e-1      contains=@perlInterpMatch nextgroup=perlSubstitutionGQQ keepend
+syntax region perlMatch matchgroup=perlMatchStartEnd  start=+\<\%(::\|'\|->\)\@<!\%(tr\|y\)#+ end=+#+me=e-1      contains=@perlInterpSQ    nextgroup=perlTranslationGQ
+syntax region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!q#+          end=+#+            contains=@perlInterpSQ    keepend
+syntax region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!q[qx]#+      end=+#+            contains=@perlInterpDQ    keepend
+syntax region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qw#+         end=+#+            contains=@perlInterpSQ    keepend
+syntax region perlQQ    matchgroup=perlStringStartEnd start=+\<\%(::\|'\|->\)\@<!qr#+         end=+#[imosx]*+    contains=@perlInterpMatch keepend
 
 " Add state to keywords
-syn keyword perlStatementStorage my local our state
+syntax keyword perlStatementStorage my local our state
+
+" Moose and Method::Signatures
+syntax match perlFunction "\<\(method\|func\|has\|extends\)\>"
 
 unlet b:current_syntax
 syntax include @SQL syntax/sql.vim

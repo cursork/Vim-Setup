@@ -47,8 +47,10 @@ if $COLORSCHEME =~'light' || has('gui_running')
 else
 	" Elflord is nice on a terminal but absolutely vile in gVim
 	colorscheme elflord
-	highlight Constant ctermfg=darkred
-	highlight CursorLine ctermbg=darkgrey cterm=none gui=none guibg=#000075
+	highlight Constant    ctermfg=darkred
+	highlight CursorLine  cterm=underline
+	highlight ColorColumn ctermbg=darkgrey
+	highlight SignColumn  ctermbg=black
 endif
 
 " Really want ALT to be used for Vim only on Windows. Whether or not the menu

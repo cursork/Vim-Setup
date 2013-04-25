@@ -410,6 +410,11 @@ function! NKCurrentProc()
 	endif
 endfunction
 
+" Use the current perlbrew'ed perl if we can
+if has('unix') && has("gui_running") && filereadable($HOME . "/perl5/perlbrew/etc/bashrc")
+  let $PATH=system("source " . $HOME . "/perl5/perlbrew/etc/bashrc; echo -n $PATH")
+endif
+
 " Perl after file will set this to <Leader>ef (execute file)
 function! NKRunPerlInNewWindow()
 	" Must write first!

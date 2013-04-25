@@ -14,8 +14,9 @@ setlocal keywordprg=perldoc
 " Generally I want to be based in the root of a project and look in 'lib' for
 " files to 'gf' to
 silent! execute 'Rooter'
-setlocal path+=lib
-let $PERL5LIB='lib'
+let &l:path.=substitute($PERL5LIB,':',',','g')
+let &l:path.=',lib'
+let $PERL5LIB.=':lib'
 setlocal suffixesadd=.pm,.pl
 setlocal includeexpr=substitute(v:fname,'::','/','g')
 " Without this you have to put the cursor inside the last word in Package::Name

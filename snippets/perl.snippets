@@ -118,7 +118,7 @@ snippet slurp
 	my $${1:var};
 	{ local $/ = undef; local *FILE; open FILE, "<${2:file}"; $$1 = <FILE>; close FILE }${3}
 # POD!
-snippet POD
+snippet PODFULL
 	__END__
 
 	=head1 NAME
@@ -140,4 +140,21 @@ snippet POD
 	=head1 INCOMPATIBILITIES
 	
 	=head1 BUGS AND LIMITATIONS
+snippet POD
+	__END__
 
+	=head1 NAME
+
+	${1}
+
+	=head1 SYNOPSIS
+	
+	=head1 DESCRIPTION
+	
+	=head1 SUBROUTINES/METHODS
+snippet podlist
+	=over
+
+	=item ${1}
+
+	=back

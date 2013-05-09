@@ -633,8 +633,6 @@ nnoremap <Leader><down>  :rightbelow new
 
 " Ctrl-X Ctrl-O can be pretty annoying if it's being used a lot
 inoremap <C-]> <C-x><C-o>
-" Carry out line-by-line undo in insert
-inoremap <CR> <C-G>u<CR>
 " By default 'Y' yanks the whole line (to be vi-compatible); replace it with
 " yank to end of line for consistency with 'D'elete and 'C'hange.
 nnoremap Y y$

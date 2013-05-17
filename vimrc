@@ -104,6 +104,10 @@ if has('gui_running')
 			set lines=30
 			set columns=82
 		endif
+	else
+		" Probably Linux - who knows what we've got font-wise, so just try
+		" DejaVu Sans Mono
+		silent! set guifont=DejaVu\ Sans\ Mono\ 9
 	endif
 endif
 

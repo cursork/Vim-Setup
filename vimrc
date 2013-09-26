@@ -287,7 +287,6 @@ if has("perl")
 use v5.012;
 use warnings FATAL => 'all';
 use utf8;
-use encoding 'UTF-8';
 use autodie  ':all';
 
 use Data::Dumper;
@@ -662,7 +661,7 @@ endif
 " using C-y to scroll the window up.
 " N.B. zencoding can be used for more than HTML. Effectively it also gives us
 " snippets in other languages... See :help zencoding-define-tags-behavior
-let g:user_zen_leader_key = ','
+let g:user_zen_leader_key = '\'
 
 " A large file is > 50MB. See LargeFile plugin. Undo with :Unlarge
 let g:LargeFile = 50

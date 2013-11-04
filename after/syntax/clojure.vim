@@ -1,4 +1,4 @@
-silent! RainbowParenthesesToggle
+silent! RainbowParenthesesActivate
 silent! RainbowParenthesesLoadRound
 silent! RainbowParenthesesLoadSquare
 silent! RainbowParenthesesLoadBraces

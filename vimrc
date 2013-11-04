@@ -488,8 +488,7 @@ if v:version >= 702 && &term != 'pcterm'
 	set listchars=tab:»\ 
 	set listchars+=trail:·
 	if has('unix') && has('gui_running')
-		" So far only Menlo seems to have this - don't have Linux around to
-		" test what turns up though - so give it a go
+		" Menlo and DejaVu Sans Mono have both of these chars
 		set showbreak=↪·
 		set listchars+=extends:→
 	else
@@ -556,24 +555,6 @@ let g:sql_type_default='mysql'
 " VCS plugin should default to vertical splits
 let g:VCSCommandSplit='vertical'
 let g:VCSCommandDisableMappings=1
-"
-" Clojure Magic - rainbow parens, highlighting :used bits, nailgun evaluation
-" of clojure files / help / etc.
-" To setup Nailgun for a Clojure Project:
-"     $ lein plugin install org.clojars.ibdknox/lein-nailgun 1.1.1
-"     $ hg clone https://bitbucket.org/kotarak/vimclojure
-"     # get into the client directory and make it
-"     $ mv ng ~/.bin/ng  # or equivalent personal bin
-"     $ lein nailgun     # to start the server
-" For some reason as yet undetermined trying to set the path explicitly with
-" g:vimclojure#NailgunClient doesn't work. Neither did lein-tarsier make lein
-" nailgunning any easier.
-" TODO - Put this information somewhere handier!!!
-if v:version >= 700
-	let g:vimclojure#WantNailgun=0
-	let g:vimclojure#DynamicHighlighting=1
-	let g:vimclojure#ParenRainbow=1
-endif
 
 " Perldoc Path is where the Perldoc plugin will store its generated files.
 if has('unix')
@@ -592,13 +573,14 @@ else
 endif
 
 " Too slow...
-nnoremap :WQ :wq
-nnoremap :Q  :q
-nnoremap :W  :w
-nnoremap :S  :s
-nnoremap :Bd :bd
 nnoremap :BD :bd
+nnoremap :Bd :bd
 nnoremap :E  :e
+nnoremap :Q  :q
+nnoremap :QA :qa
+nnoremap :S  :s
+nnoremap :W  :w
+nnoremap :WQ :wq
 " Tab goes through windows in normal mode
 nnoremap <Tab> <C-w><C-w>
 " Hopefully this won't upset me using 'gv' too much
@@ -661,7 +643,7 @@ endif
 " using C-y to scroll the window up.
 " N.B. zencoding can be used for more than HTML. Effectively it also gives us
 " snippets in other languages... See :help zencoding-define-tags-behavior
-let g:user_zen_leader_key = '\'
+let g:user_zen_leader_key = '<C-x>'
 
 " A large file is > 50MB. See LargeFile plugin. Undo with :Unlarge
 let g:LargeFile = 50
@@ -704,7 +686,7 @@ nnoremap <F3> :call NKDocumentRead()<CR>
 set textwidth=79
 set formatoptions-=t
 if exists('+colorcolumn')
-	set colorcolumn=+1
+	set colorcolumn=80
 endif
 " When joining sentence lines with 'J' (lines ending with '.'/'?'/'!'), use one
 " space instead of two.

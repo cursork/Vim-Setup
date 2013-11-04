@@ -85,4 +85,7 @@ git clone git@github.com:suan/vim-instant-markdown.git
 echo Cloning Puppet...
 git clone git@github.com:rodjek/vim-puppet.git
 
+echo Cloning unstack
+git clone https://github.com/mattboehm/vim-unstack.git
+
 echo Done.

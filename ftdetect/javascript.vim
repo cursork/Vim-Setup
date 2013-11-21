@@ -1,3 +1,0 @@
-" .json files are JS too...
-autocmd BufNewFile,BufRead *.json set filetype=javascript
-

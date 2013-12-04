@@ -91,4 +91,7 @@ git clone https://github.com/mattboehm/vim-unstack.git
 echo Cloning JSON...
 git clone https://github.com/elzr/vim-json.git
 
+echo Cloning paredit...
+hg clone ssh://hg@bitbucket.org/kovisoft/paredit
+
 echo Done.

@@ -27,7 +27,7 @@ if $COLORSCHEME =~'light' || has('gui_running')
 	colorscheme nicotine
 
 	" ...but needs some refinement
-	highlight CursorLine ctermbg=lightgrey cterm=none gui=none guibg=#F0F0F0
+	highlight CursorLine cterm=underline gui=none guibg=#F0F0F0
 	highlight ColorColumn guibg=#FCFCC0
 	" CursorLine bg overrides Error bg, meaning we have light-on-light which is
 	" horrible. Standout seems to have the desired effect: It reverses the
@@ -47,6 +47,8 @@ if $COLORSCHEME =~'light' || has('gui_running')
 else
 	" Elflord is nice on a terminal but absolutely vile in gVim
 	colorscheme elflord
+	silent! colorscheme nicotine
+
 	highlight Constant    ctermfg=darkred
 	highlight CursorLine  cterm=underline
 	highlight ColorColumn ctermbg=darkgrey

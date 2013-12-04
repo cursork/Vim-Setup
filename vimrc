@@ -216,6 +216,8 @@ set whichwrap=b,s
 " N.B. Must happen after a colorscheme call.
 highlight Todo cterm=bold ctermfg=red ctermbg=none gui=bold guifg=red guibg=NONE
 
+command! TODO :execute 'vimgrep /TODO\|FIXME\|XXX/gj **/*.'.expand('%:e') | copen
+
 " Spell-checking! Should happen in code comments. As it is slightly
 " distracting, make it toggle-able on F8. Keys are z= for suggestions, zg to
 " add to dictionary and zug to undo an add.

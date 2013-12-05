@@ -567,6 +567,9 @@ else
 	let g:Perldoc_path=$TEMP
 endif
 
+" Add a proper command for paredit toggling
+command! PareditToggle :call PareditToggle()
+
 " Use ack ( betterthangrep.com ) instead. Filters out hidden files. Also
 " don't restrict by filetype (-a) in order to be a bit more grep-like.
 if (has('win32') || has('win64'))
@@ -599,6 +602,7 @@ function! NKLineNumberSwitch()
 			set norelativenumber
 			set number?
 		elseif &number
+			set nonumber
 			set relativenumber
 			set relativenumber?
 		else
@@ -703,6 +707,7 @@ endfunction
 vnoremap <S-F4> <Esc>:call NKJoinParagraphs()<CR>
 
 " Useful toggles
+nnoremap <F4>   :call PareditToggle()<CR>
 nnoremap <F5>   :setlocal wrap!<CR>:setlocal wrap?<CR>
 nnoremap <M-F5> :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>
@@ -741,8 +746,7 @@ inoremap ¦ \|
 " Show what F-keys do
 function! NKKeys()
 	echo " F3   - Toggle \"true\" read-only mode  |"
-	echo " F4   -                               |                             "
-	echo " S-F4 -                               | (Visual) - Join paragraphs"
+	echo " F4   - Toggle Paredit on/off         | S-F4 (Visual) - Join paragraphs"
 	echo " F5   - Toggle case-sensitive search  |"
 	echo " F6   - Toggle paste                  | M-F6     - Toggle expand tabs"
 	echo " F7   - Toggle Tagbar                 | M-F7     - Toggle NERD Tree"

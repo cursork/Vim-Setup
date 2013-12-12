@@ -707,7 +707,7 @@ endfunction
 vnoremap <S-F4> <Esc>:call NKJoinParagraphs()<CR>
 
 " Useful toggles
-nnoremap <F4>   :call PareditToggle()<CR>
+nnoremap <F4>   :PareditToggle<CR>
 nnoremap <F5>   :setlocal wrap!<CR>:setlocal wrap?<CR>
 nnoremap <M-F5> :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>

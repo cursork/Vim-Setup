@@ -94,4 +94,7 @@ git clone https://github.com/elzr/vim-json.git
 echo Cloning paredit...
 hg clone ssh://hg@bitbucket.org/kovisoft/paredit
 
+echo Cloning Salt Stack...
+git clone git@github.com:saltstack/salt-vim.git
+
 echo Done.

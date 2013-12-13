@@ -97,4 +97,7 @@ hg clone ssh://hg@bitbucket.org/kovisoft/paredit
 echo Cloning Salt Stack...
 git clone git@github.com:saltstack/salt-vim.git
 
+echo Cloning CtrlP...
+git clone git@github.com:kien/ctrlp.vim.git
+
 echo Done.

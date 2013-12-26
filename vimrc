@@ -26,7 +26,7 @@ if $COLORSCHEME =~'light' || has('gui_running')
 	" Nicotine is excellent
 	colorscheme nicotine
 
-	" ...but needs some refinement
+	" ...but needs quite a bit of refinement
 	highlight CursorLine cterm=underline gui=none guibg=#F0F0F0
 	highlight ColorColumn guibg=#FCFCC0
 	" CursorLine bg overrides Error bg, meaning we have light-on-light which is
@@ -42,6 +42,8 @@ if $COLORSCHEME =~'light' || has('gui_running')
 	highlight Identifier ctermfg=blue guifg=blue
 	" Bold grey for hidden items
 	highlight Ignore guifg=#999999 gui=bold
+	" Conceal is underlined (I currently conceal some things with whitespace!)
+	highlight Conceal guifg=#777777 cterm=underline gui=underline,italic guibg=#FFFFCC
 	" Comments are red, DiffText is set to red background... Not a good combo
 	highlight DiffText term=reverse cterm=bold ctermbg=12 gui=bold guifg=white guibg=red
 else
@@ -708,6 +710,7 @@ vnoremap <S-F4> <Esc>:call NKJoinParagraphs()<CR>
 
 " Useful toggles
 nnoremap <F4>   :PareditToggle<CR>
+inoremap <F4>   <Esc>:PareditToggle<CR>a
 nnoremap <F5>   :setlocal wrap!<CR>:setlocal wrap?<CR>
 nnoremap <M-F5> :set ignorecase!<CR>:set ignorecase?<CR>
 nnoremap <F6>   :set paste!<CR>:set paste?<CR>

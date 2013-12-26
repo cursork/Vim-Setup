@@ -42,8 +42,8 @@ if $COLORSCHEME =~'light' || has('gui_running')
 	highlight Identifier ctermfg=blue guifg=blue
 	" Bold grey for hidden items
 	highlight Ignore guifg=#999999 gui=bold
-	" Conceal is underlined (I currently conceal some things with whitespace!)
-	highlight Conceal guifg=#777777 cterm=underline gui=underline,italic guibg=#FFFFCC
+	" Conceal is italic
+	highlight Conceal guifg=#777777 cterm=italic gui=italic guibg=#FFFFCC
 	" Comments are red, DiffText is set to red background... Not a good combo
 	highlight DiffText term=reverse cterm=bold ctermbg=12 gui=bold guifg=white guibg=red
 else
@@ -541,6 +541,10 @@ endif
 " arbitrary 'za' usage to hide similarly indented blocks.
 set foldlevelstart=99
 set foldmethod=indent
+
+" Conceal by default for everything - N.B. '2' will hide things completely if
+" they don't have a cchar
+set conceallevel=2
 
 " Numberwidth is how much space line numbers take up on the left-hand side.
 " Doesn't have an effect until :set number is used (mapped to F10 below).

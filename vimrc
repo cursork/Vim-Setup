@@ -532,9 +532,14 @@ com! -nargs=0 NKLineBreaks call NKLineBreaks()
 set wildmenu
 set wildmode=list:longest
 
-" Autocompletion only completes to longest common substring
 if exists('&completeopt')
+	" Autocompletion only completes to longest common substring
 	set completeopt=longest,menu,preview
+	" I despise the preview window sticking around - what use is it?
+	" This causes particular problems with fireplace.vim for Clojure, where
+	" it's kind enough to give function docs on completion options
+	autocmd CursorMovedI * if pumvisible() == 0|silent! pclose|endif
+	autocmd InsertLeave * if pumvisible() == 0|silent! pclose|endif
 endif
 
 " Folding config - no folding to begin with, fold based on indent. Allows

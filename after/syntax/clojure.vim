@@ -1,5 +1,5 @@
 " Bit of a hackish way to conceal type annotations
-syntax match clojureTypeHint /\^[A-z]\+/ conceal cchar=^
+syntax match clojureTypeHint /\^[A-z_.]\+/ conceal cchar=^
 hi link clojureTypeHint Conceal
 
 silent! RainbowParenthesesActivate

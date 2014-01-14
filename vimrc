@@ -583,6 +583,11 @@ let g:paredit_mode = 0
 " Add a proper command for paredit toggling
 command! PareditToggle :call PareditToggle()
 
+" Don't do an instant preview until :InstantMarkdownPreview is called. Also,
+" really don't update on every single key-press
+let g:instant_markdown_slow = 1
+let g:instant_markdown_autostart = 0
+
 " Use ack ( betterthangrep.com ) instead. Filters out hidden files. Also
 " don't restrict by filetype (-a) in order to be a bit more grep-like.
 if (has('win32') || has('win64'))

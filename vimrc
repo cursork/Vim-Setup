@@ -88,8 +88,6 @@ if has('gui_running')
 	if has('gui_macvim')
 		" Nice and decent Unicode support
 		set guifont=Menlo:h11
-		" Lion full-screen mode - don't maximise horizontally
-		set fuoptions-=maxhorz
 	elseif (has('win32') || has('win64'))
 		" Consolas is great, but has bad character support. DejaVu Sans Mono is
 		" better, so use it when we can.
@@ -541,6 +539,12 @@ if exists('&completeopt')
 	autocmd CursorMovedI * if pumvisible() == 0|silent! pclose|endif
 	autocmd InsertLeave * if pumvisible() == 0|silent! pclose|endif
 endif
+
+" Set some ignores
+set wildignore+=.hg,.git,.svn                    " Version control
+set wildignore+=*.sw?                            " Vim swap files
+set wildignore+=*.DS_Store                       " OSX bullshit
+set wildignore+=target
 
 " Folding config - no folding to begin with, fold based on indent. Allows
 " arbitrary 'za' usage to hide similarly indented blocks.

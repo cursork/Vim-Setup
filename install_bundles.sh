@@ -106,4 +106,7 @@ git clone git@github.com:tpope/vim-repeat.git
 echo Cloning vim-sexp...
 git clone git@github.com:guns/vim-sexp.git
 
+echo Cloning floobits...
+git clone https://github.com/Floobits/floobits-vim
+
 echo Done.

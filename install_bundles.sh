@@ -109,4 +109,7 @@ git clone git@github.com:guns/vim-sexp.git
 echo Cloning floobits...
 git clone https://github.com/Floobits/floobits-vim
 
+echo Cloning clang_complete...
+git clone git@github.com:Rip-Rip/clang_complete.git
+
 echo Done.

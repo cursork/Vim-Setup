@@ -218,6 +218,8 @@ highlight Todo cterm=bold ctermfg=red ctermbg=none gui=bold guifg=red guibg=NONE
 
 command! TODO :execute 'vimgrep /TODO\|FIXME\|XXX/gj **/*.'.expand('%:e') | copen
 
+let g:clang_library_path = '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/'
+
 " Spell-checking! Should happen in code comments. As it is slightly
 " distracting, make it toggle-able on F8. Keys are z= for suggestions, zg to
 " add to dictionary and zug to undo an add.

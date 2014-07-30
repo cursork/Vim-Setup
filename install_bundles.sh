@@ -69,6 +69,10 @@ echo Cloning fireplace and friends \(Clojure\)...
 git clone git://github.com/tpope/vim-fireplace.git
 git clone git://github.com/tpope/vim-classpath.git
 git clone git://github.com/guns/vim-clojure-static.git
+git clone git@github.com:guns/vim-clojure-highlight.git
+# BREAKS HORRIFICALLY
+git clone git@github.com:tpope/vim-leiningen.git
+git clone git@github.com:tpope/vim-projectionist.git
 
 echo Cloning Rainbow Parentheses...
 git clone git@github.com:kien/rainbow_parentheses.vim.git
@@ -111,5 +115,17 @@ git clone https://github.com/Floobits/floobits-vim
 
 echo Cloning clang_complete...
 git clone git@github.com:Rip-Rip/clang_complete.git
+
+echo "Cloning vimproc (N.B. requires compile!)"
+git clone https://github.com/Shougo/vimproc.vim.git ~/.vim/bundle/vimproc.vim
+
+echo Cloning VimShell...
+git clone git@github.com:Shougo/vimshell.vim.git
+
+echo Cloning Solarized...
+git clone git://github.com/altercation/vim-colors-solarized.git
+
+echo Cloning Haskell Stuff...
+git clone git@github.com:lukerandall/haskellmode-vim.git
 
 echo Done.

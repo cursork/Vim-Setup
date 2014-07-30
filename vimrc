@@ -594,6 +594,8 @@ command! PareditToggle :call PareditToggle()
 let g:instant_markdown_slow = 1
 let g:instant_markdown_autostart = 0
 
+let g:vim_clojure_highlight_require_existing_session = 1
+
 " Use ack ( betterthangrep.com ) instead. Filters out hidden files. Also
 " don't restrict by filetype (-a) in order to be a bit more grep-like.
 if (has('win32') || has('win64'))
@@ -612,8 +614,8 @@ nnoremap :QA :qa
 nnoremap :S  :s
 nnoremap :W  :w
 nnoremap :WQ :wq
-" Tab goes through windows in normal mode
-nnoremap <Tab> <C-w><C-w>
+"" Tab goes through windows in normal mode
+" nnoremap <Tab> <C-w><C-w>
 " Hopefully this won't upset me using 'gv' too much
 nnoremap gvf :vertical wincmd f<CR>
 
@@ -687,6 +689,10 @@ au FileType xml setlocal foldmethod=syntax
 " Syntastic should use signs to show compile errors
 let g:syntastic_enable_signs=1
 
+" Configure browser for haskell_doc.vim
+let g:haddock_browser = "open"
+let g:haddock_browser_callformat = "%s %s"
+
 " Document reading mode, provides elinks-like insert/delete scrolling
 " N.B. insert / delete are mapped for ALL buffers
 nnoremap <Help> <Ins>
@@ -752,10 +758,15 @@ let g:NERDTreeHijackNetrw=0
 " Show all alphabetic registers
 com! -nargs=0 NKNamedRegisters registers abcdefghijklmnopqrstuvwxyz
 
+" Enable automatic reloads on write
+com! -nargs=0 NKClojureReloadOnWrite autocmd BufWritePost *.clj :Require
+
 " Custom Digraphs
 " Square and cube superscripts
 digraphs ^2 178
 digraphs ^3 179
+digraphs ?! 8253
+digraphs !? 8253
 " Unicode completion plugin can show me the digraph for arbitrary characters
 let g:showDigraphCode=1
 

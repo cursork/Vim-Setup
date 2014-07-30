@@ -3,3 +3,4 @@
 " So use cpo (o for outermost) for that.
 nnoremap cpo :Eval<CR>
 
+set completeopt-=preview

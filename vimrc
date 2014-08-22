@@ -196,14 +196,13 @@ elseif has('autocmd')
 endif
 
 " Don't understand why anyone uses spaces to indent
-set noexpandtab
-" ... but we must have a more reasonable tabstop
+" BUT I appear to have lost that battle. So let's go with the gosh-darned herd
+set expandtab
 set tabstop=4
-" ... and the shiftwidth to go with it
 set shiftwidth=4
-" Ignoring the above; if someone is enough of a *&^% to indent with spaces, I
-" should try to be consistent. N.B. requires autoindent or smartindent on
-" rather than indentexpr or cindent (which often isn't true in source code!)
+" Try to be consistent with existing indents in the right conditions. N.B.
+" requires autoindent or smartindent on rather than indentexpr or cindent
+" (which often isn't true in source code!)
 set copyindent
 set preserveindent
 

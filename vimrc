@@ -266,6 +266,7 @@ if has("perl")
 						(?:^\s*function\s+(\S+)\s*\()|
 						(?:(?:\s|^)([A-z]+)\s*[=:]\s*function\s*\()
 					}x,
+				clojure => qr/def(?:type|record|n?-?|macro|test)(?:\s^(?:\{[^}]+\}|\:\S+))?\s+(\S+)/,
 			}->{$ftype};
 		if (!defined $expression) {
 			VIM::DoCommand "let procName=''";
@@ -284,6 +285,7 @@ if has("perl")
 				}
 			}
 		}
+        $proc_name =~ s/'/''/g;
 		VIM::DoCommand "let procName='$proc_name'";
 	}
 
@@ -534,18 +536,17 @@ set wildmode=list:longest
 if exists('&completeopt')
 	" Autocompletion only completes to longest common substring
 	set completeopt=longest,menu,preview
-	" I despise the preview window sticking around - what use is it?
-	" This causes particular problems with fireplace.vim for Clojure, where
-	" it's kind enough to give function docs on completion options
-	autocmd CursorMovedI * if pumvisible() == 0|silent! pclose|endif
-	autocmd InsertLeave * if pumvisible() == 0|silent! pclose|endif
+"	" I despise the preview window sticking around - what use is it?
+"	" This causes particular problems with fireplace.vim for Clojure, where
+"	" it's kind enough to give function docs on completion options
+"	autocmd CursorMovedI * if pumvisible() == 0|silent! pclose|endif
+"	autocmd InsertLeave * if pumvisible() == 0|silent! pclose|endif
 endif
 
 " Set some ignores
-set wildignore+=.hg,.git,.svn                    " Version control
-set wildignore+=*.sw?                            " Vim swap files
-set wildignore+=*.DS_Store                       " OSX bullshit
-set wildignore+=target
+set wildignore+=.hg,.git,.svn " Version control
+set wildignore+=*.sw?         " Vim swap files
+set wildignore+=*.DS_Store
 
 " Folding config - no folding to begin with, fold based on indent. Allows
 " arbitrary 'za' usage to hide similarly indented blocks.
@@ -554,7 +555,7 @@ set foldmethod=indent
 
 " Conceal by default for everything - N.B. '2' will hide things completely if
 " they don't have a cchar
-set conceallevel=2
+set conceallevel=0
 
 " Numberwidth is how much space line numbers take up on the left-hand side.
 " Doesn't have an effect until :set number is used (mapped to F10 below).
@@ -642,6 +643,10 @@ endfunction
 nnoremap <F10> :call NKLineNumberSwitch()<CR>
 inoremap <F10> <Esc>:call NKLineNumberSwitch()<CR>a
 vnoremap <F10> <Esc>:call NKLineNumberSwitch()<CR>gv
+
+" How did I survive without this, put splits at the bottom (including
+" preview-window)
+set splitbelow
 
 " Open new window split in direction of cursor-key pressed
 nnoremap <Leader><left>  :leftabove  vnew 

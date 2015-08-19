@@ -27,3 +27,8 @@ if !exists('*EditNamespace')
 endif
 command! -nargs=1 NS call EditNamespace('<args>')
 
+" Quick and dirty compile NS
+nnoremap <F13> :Require<CR>
+nnoremap <F14> :normal cpp<CR>
+nnoremap <F15> :normal cpaF<CR>
+nnoremap <F16> :normal cpr<CR>
